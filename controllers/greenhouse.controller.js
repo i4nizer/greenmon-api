@@ -1,3 +1,4 @@
+const { where } = require("sequelize")
 const Greenhouse = require("../models/greenhouse.model")
 const { AppError } = require("../utils/app-error.util")
 
@@ -6,10 +7,9 @@ const getGreenhouse = async (req, res, next) => {
 	try {
 		const { userId } = req.accessTokenPayload
 		const { greenhouseId } = req.query
+		const filter = greenhouseId ? { id: greenhouseId, userId } : { userId }
 
-		const greenhouseDocs = await Greenhouse.findAll(
-			{ where: { id: greenhouseId, userId } }
-		)
+		const greenhouseDocs = await Greenhouse.findAll({ where: filter })
 		
 		res.json({ greenhouses: greenhouseDocs })
 	} catch (error) {
