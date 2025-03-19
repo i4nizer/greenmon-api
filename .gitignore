@@ -1,0 +1,14 @@
+# Node Modules
+node_modules/
+
+# Keep Local Logs
+logs/
+
+# Keep Local Uploads
+uploads/
+
+# Environment Variables
+*.env
+
+# Exclude local
+change.log.md
