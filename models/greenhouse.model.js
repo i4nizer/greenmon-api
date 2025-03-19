@@ -15,7 +15,7 @@ const Greenhouse = sequelize.define(
 			allowNull: false,
 		},
 		description: {
-			type: DataTypes.TEXT(500),
+			type: DataTypes.STRING(500),
 			allowNull: true,
 		},
 		userId: {
