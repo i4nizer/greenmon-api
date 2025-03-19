@@ -39,10 +39,11 @@ const patchGreenhouse = async (req, res, next) => {
 	try {
 		const { userId } = req.accessTokenPayload
 		const { greenhouseId, name, description } = req.body
+		const filter = greenhouseId ? { id: greenhouseId, userId } : { userId }
 
 		const [updatedRows] = await Greenhouse.update(
 			{ name, description },
-			{ where: { userId, id: greenhouseId } }
+			{ where: filter }
 		)
 
 		if (!updatedRows) throw new AppError(404, "Greenhouse not found.")
