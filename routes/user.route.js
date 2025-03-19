@@ -45,6 +45,6 @@ router.post("/forgot-password", checkJoi(forgotPasswordSchema), postForgotPasswo
 router.post("/reset-password-otp", checkJoi(resetPasswordOTPSchema), postResetPasswordOTP)
 router.post("/reset-password", checkJoi(resetPasswordSchema), postResetPassword)
 
-router.use("/greenhouse", greenhouseRoutes)
+router.use("/greenhouse", checkAccessToken, greenhouseRoutes)
 
 module.exports = router
