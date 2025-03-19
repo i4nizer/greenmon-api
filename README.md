@@ -16,29 +16,34 @@
    ```
 4. Set up environment variables (`.env` file):
    ```env
-    NODE_ENV=development
+   NODE_ENV=development
 
-    PORT=4001
-    CLIENT_DOMAIN=http://localhost:3000
-    CONNECTION_STRING=mongodb://localhost:27017/greenmonv1
+   PORT=4000
+   CLIENT_DOMAIN=http://localhost:3000
 
-    DEV_EMAIL=youremail@gmail.com
+   DB_HOST=localhost
+   DB_PORT=3306
+   DB_DIALECT=mysql
+   DB_NAME=greenmon
+   DB_USER=root
+   DB_PASSWORD=
 
-    API_EMAIL=websiteemail@gmail.com
-    API_EMAIL_PASSWORD=websiteemailpsk
+   DEV_EMAIL=youremail
 
-    OTP_LIFE=300000
-    API_LIFE=604800000
-    ACCESS_LIFE=900000
-    REFRESH_LIFE=604800000
+   API_EMAIL=thiswebemail
+   API_EMAIL_PASSWORD=thiswebemailpsk
 
-    RESET_PASSWORD_DURATION=900000
+   OTP_LIFE=300000
+   API_LIFE=604800000
+   ACCESS_LIFE=900000
+   REFRESH_LIFE=604800000
 
-    OTP_DIGITS=6
+   OTP_DIGITS=6
+   RESET_PASSWORD_DURATION=900000
 
-    API_KEY=yourapikey
-    ACCESS_KEY=youraccesskey
-    REFRESH_KEY=yourrefreshkey
+   API_KEY=yourapikey
+   ACCESS_KEY=youraccesskey
+   REFRESH_KEY=yourrefreshkey
    ```
 5. Start the server:
    ```sh
