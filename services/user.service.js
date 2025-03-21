@@ -116,7 +116,6 @@ const signUpUser = async (name, email, password) => {
 const verifyUser = async (userId, otpNum) => {
 	// find user
 	const userDoc = await User.findByPk(userId)
-	console.log(userId, otpNum, userDoc)
 
 	// not found
 	if (!userDoc) throw new AppError(404, "User not found.")

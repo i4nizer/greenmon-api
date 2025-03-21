@@ -15,11 +15,17 @@ const {
     deleteGreenhouse
 } = require("../controllers/greenhouse.controller")
 
+const mcuRoutes = require("./mcu.route")
+    
+    
+
 router.route("/")
     .get(getGreenhouse)
     .post(checkJoi(postGreenhouseSchema), postGreenhouse)
     .patch(checkJoi(patchGreenhouseSchema), patchGreenhouse)
     .delete(deleteGreenhouse)
+
+router.use("/mcu", mcuRoutes)
 
 
 
