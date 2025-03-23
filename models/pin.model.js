@@ -35,6 +35,12 @@ const Pin = sequelize.define(
 	{
 		timestamps: true,
 		tableName: "pins",
+		indexes: [
+			{
+				unique: true,
+				fields: ["mcuId", "type", "number"]
+			}
+		]
 	}
 )
 
