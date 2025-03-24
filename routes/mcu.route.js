@@ -8,6 +8,7 @@ const { checkJoi } = require('../middlewares/joi.middleware')
 const { getMcu, postMcu, patchMcu, deleteMcu } = require('../controllers/mcu.controller');
 
 const pinRoutes = require('./pin.route')
+const sensorRoutes = require('./sensor.route')
 
 
 
@@ -18,6 +19,7 @@ router.route('/')
     .delete(checkJoi(deleteMcuSchema, "Query"), deleteMcu);
 
 router.use('/pin', pinRoutes)
+router.use('/sensor', sensorRoutes)
 
 
 
