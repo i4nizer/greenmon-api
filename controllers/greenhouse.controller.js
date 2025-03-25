@@ -46,7 +46,7 @@ const patchGreenhouse = async (req, res, next) => {
 			{ where: filter }
 		)
 
-		if (!updatedRows) throw new AppError(404, "Greenhouse not found.")
+		if (!updatedRows) return next(new AppError(404, "Greenhouse not found."))
 
 		res.json({ text: "Greenhouse updated successfully." })
 	} catch (error) {
@@ -64,7 +64,7 @@ const deleteGreenhouse = async (req, res, next) => {
 			{ where: { userId, id: greenhouseId } }
 		)
 
-		if (!deletedRows) throw new AppError(404, "Greenhouse not found.")
+		if (!deletedRows) return next(new AppError(404, "Greenhouse not found."))
 
 		res.json({ text: "Greenhouse deleted successfully." })
 	} catch (error) {

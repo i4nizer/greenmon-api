@@ -27,7 +27,7 @@ const postSensor = async (req, res, next) => {
         const { name, label, interval, disabled, mcuId } = req.body
 
         const mcuDoc = await MCU.findByPk(mcuId)
-        if (!mcuDoc) throw new AppError(404, "MCU not found.")
+        if (!mcuDoc) return next(new AppError(404, "MCU not found."))
 
         const sensorDoc = await Sensor.create({ name, label, interval, disabled, mcuId })
 
@@ -51,7 +51,7 @@ const patchSensor = async (req, res, next) => {
             { where: filter }
         )
 
-        if (!updatedRows) throw new AppError(404, "Sensor not found.")
+        if (!updatedRows) return next(new AppError(404, "Sensor not found."))
 
         res.json({ text: "Sensor updated successfully." })
     } catch (error) {
@@ -68,7 +68,7 @@ const deleteSensor = async (req, res, next) => {
             { where: { id: sensorId } }
         )
 
-        if (!deletedRows) throw new AppError(404, "Sensor not found.")
+        if (!deletedRows) return next(new AppError(404, "Sensor not found."))
 
         res.json({ text: "Sensor deleted successfully." })
     } catch (error) {

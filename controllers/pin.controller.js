@@ -28,7 +28,7 @@ const postPin = async (req, res, next) => {
         const { type, mode, number, mcuId } = req.body
 
         const mcuDoc = await MCU.findByPk(mcuId)
-        if (!mcuDoc) throw new AppError(404, "MCU not found.")
+        if (!mcuDoc) return next(new AppError(404, "MCU not found."))
 
         const pinDoc = await Pin.create({ type, mode, number, mcuId })
 
@@ -52,7 +52,7 @@ const patchPin = async (req, res, next) => {
             { where: filter }
         )
 
-        if (!updatedRows) throw new AppError(404, "Pin not found.")
+        if (!updatedRows) return next(new AppError(404, "Pin not found."))
 
         res.json({ text: "Pin updated successfully." })
     } catch (error) {
@@ -69,7 +69,7 @@ const deletePin = async (req, res, next) => {
             { where: { id: pinId } }
         )
 
-        if (!deletedRows) throw new AppError(404, "Pin not found.")
+        if (!deletedRows) return next(new AppError(404, "Pin not found."))
 
         res.json({ text: "Pin deleted successfully." })
     } catch (error) {

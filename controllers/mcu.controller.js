@@ -69,7 +69,7 @@ const patchMcu = async (req, res, next) => {
             { where: filter }
         )
 
-        if (!updatedRows) throw new AppError(404, "MCU not found.")
+        if (!updatedRows) return next(new AppError(404, "MCU not found."))
 
         res.json({ text: "MCU updated successfully." })
     } catch (error) {
@@ -86,7 +86,7 @@ const deleteMcu = async (req, res, next) => {
             { where: { id: mcuId } }
         )
 
-        if (!deletedRows) throw new AppError(404, "MCU not found.")
+        if (!deletedRows) return next(new AppError(404, "MCU not found."))
 
         res.json({ text: "MCU deleted successfully." })
     } catch (error) {
