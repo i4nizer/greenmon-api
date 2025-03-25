@@ -24,12 +24,12 @@ const getSensor = async (req, res, next) => {
 /** Responds with create success. */
 const postSensor = async (req, res, next) => {
     try {
-        const { name, label, mcuId } = req.body
+        const { name, label, interval, disabled, mcuId } = req.body
 
         const mcuDoc = await MCU.findByPk(mcuId)
         if (!mcuDoc) throw new AppError(404, "MCU not found.")
 
-        const sensorDoc = await Sensor.create({ name, label, mcuId })
+        const sensorDoc = await Sensor.create({ name, label, interval, disabled, mcuId })
 
         res.json({
             text: "Sensor created successfully.",
@@ -43,11 +43,11 @@ const postSensor = async (req, res, next) => {
 /** Responds with update success. */
 const patchSensor = async (req, res, next) => {
     try {
-        const { sensorId, name, label } = req.body
+        const { sensorId, name, label, interval, disabled } = req.body
         const filter = { id: sensorId }
 
         const [updatedRows] = await Sensor.update(
-            { name, label },
+            { name, label, interval, disabled },
             { where: filter }
         )
 
