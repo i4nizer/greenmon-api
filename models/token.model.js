@@ -43,6 +43,11 @@ const Token = sequelize.define(
 			{
 				unique: true,
 				fields: ["userId", "type"],
+				where: {
+					type: {
+						[sequelize.Sequelize.Op.ne]: "Api",
+					},
+				},
 			},
 		],
 	}
