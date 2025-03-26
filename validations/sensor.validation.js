@@ -2,6 +2,7 @@ const Joi = require("joi")
 
 /** Requires sensorId. */
 const getSensorSchema = Joi.object({
+	mcuId: Joi.string().optional(),
     sensorId: Joi.string().required(),
 })
 

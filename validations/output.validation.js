@@ -9,7 +9,7 @@ const getOutputSchema = Joi.object({
 
 /** Requires name, unit, type, pinId, and sensorId. */
 const postOutputSchema = Joi.object({
-    icon: Joi.string().min(3).max(100).optional(),
+    icon: Joi.string().optional(),
     name: Joi.string().min(3).max(100).required(),
     unit: Joi.string().min(1).max(50).required(),
     type: Joi.string().min(3).max(50).required(),
@@ -20,10 +20,11 @@ const postOutputSchema = Joi.object({
 /** Requires outputId and optionally name, unit, and type. */
 const patchOutputSchema = Joi.object({
 	outputId: Joi.string().required(),
-	icon: Joi.string().min(3).max(100).optional(),
+	icon: Joi.string().optional(),
 	name: Joi.string().min(3).max(100).optional(),
 	unit: Joi.string().min(1).max(50).optional(),
 	type: Joi.string().min(3).max(50).optional(),
+	pinId: Joi.string().optional(),
 })
 
 /** Requires outputId. */

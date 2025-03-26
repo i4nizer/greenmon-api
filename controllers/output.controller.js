@@ -32,7 +32,9 @@ const postOutput = async (req, res, next) => {
         // Update pin mode to "Output"
         const pinDoc = await Pin.findByPk(pinId)
         if (!pinDoc) return next(new AppError(404, "Pin not found."))
-        else await pinDoc.update({ mode: "Output" })
+        if (!(pinDoc.mode == 'Unset' || pinDoc.mode == 'Output')) return next(new AppError(400, "Pin is already in use."))
+        
+        await pinDoc.update({ mode: "Output" })
 
         const outputDoc = await Output.create({ icon, name, unit, type, pinId, sensorId })
 
@@ -48,11 +50,36 @@ const postOutput = async (req, res, next) => {
 /** Responds with update success. */
 const patchOutput = async (req, res, next) => {
     try {
-        const { outputId, icon, name, unit, type } = req.body
+        const { outputId, icon, name, unit, type, pinId } = req.body
         const filter = { id: outputId }
 
+        // find the output
+        const outputDoc = await Output.findByPk(outputId)
+        if (!outputDoc) return next(new AppError(404, "Output not found."))
+        
+        // when pinId is changed,
+        // change the mode of the old pin to "Unset"
+        if (outputDoc.pinId != pinId) {
+            const oldPinDoc = await Pin.findByPk(outputDoc.pinId)
+            
+            if (oldPinDoc) {
+                
+                // check if there are no outputs using the old pin
+                const outputCount = await Output.count({ where: { pinId: oldPinDoc.id } })
+                if (outputCount <= 1) await oldPinDoc.update({ mode: "Unset" })
+            }
+        }
+    
+        // Find the pin
+        const pinDoc = await Pin.findByPk(pinId)
+        if (!pinDoc) return next(new AppError(404, "Pin not found."))
+        if (!(pinDoc.mode == 'Unset' || pinDoc.mode == 'Output')) return next(new AppError(400, "Pin is already in use."))
+            
+        // Update pin mode to "Output"
+        await pinDoc.update({ mode: "Output" })
+
         const [updatedRows] = await Output.update(
-            { icon, name, unit, type },
+            { icon, name, unit, type, pinId },
             { where: filter }
         )
 

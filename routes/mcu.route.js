@@ -9,6 +9,7 @@ const { getMcu, postMcu, patchMcu, deleteMcu } = require('../controllers/mcu.con
 
 const pinRoutes = require('./pin.route')
 const sensorRoutes = require('./sensor.route')
+const actuatorRoutes = require('./actuator.route')
 
 
 
@@ -20,6 +21,7 @@ router.route('/')
 
 router.use('/pin', pinRoutes)
 router.use('/sensor', sensorRoutes)
+router.use('/actuator', actuatorRoutes)
 
 
 

@@ -7,9 +7,10 @@ const { AppError } = require('../utils/app-error.util')
 /** Responds with an array of sensors. */
 const getSensor = async (req, res, next) => {
     try {
-        const { sensorId } = req.query
+        const { mcuId, sensorId } = req.query
 
         const filter = {
+            ...(mcuId && { mcuId }),
             ...(sensorId && { id: sensorId }),
         }
 
