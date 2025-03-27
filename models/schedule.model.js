@@ -9,6 +9,10 @@ const Schedule = sequelize.define(
 			primaryKey: true,
 			autoIncrement: true,
 		},
+		name: {
+			type: DataTypes.STRING,
+			allowNull: false,
+		},
 		days: {
 			type: DataTypes.JSON,
 			defaultValue: [],
