@@ -16,6 +16,8 @@ const {
 } = require("../controllers/greenhouse.controller")
 
 const mcuRoutes = require("./mcu.route")
+const actionRoutes = require("./action.route")
+const scheduleRoutes = require("./schedule.route")
     
     
 
@@ -26,6 +28,8 @@ router.route("/")
     .delete(deleteGreenhouse)
 
 router.use("/mcu", mcuRoutes)
+router.use("/action", actionRoutes)
+router.use("/schedule", scheduleRoutes)
 
 
 
