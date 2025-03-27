@@ -1,4 +1,3 @@
-const User = require("./user.model")
 const sequelize = require("../configs/sequelize.config")
 const { DataTypes } = require("sequelize")
 
@@ -30,7 +29,7 @@ const OTP = sequelize.define(
 			type: DataTypes.INTEGER,
 			allowNull: false,
 			references: {
-				model: User,
+				model: "users",
 				key: "id",
 			},
 			onDelete: "CASCADE",
@@ -43,13 +42,9 @@ const OTP = sequelize.define(
 			{
 				unique: true,
 				fields: ["userId", "type"],
-			}
-		]
+			},
+		],
 	}
 )
-
-// Define relationships
-User.hasMany(OTP, { foreignKey: "userId", onDelete: "CASCADE" })
-OTP.belongsTo(User, { foreignKey: "userId" })
 
 module.exports = OTP

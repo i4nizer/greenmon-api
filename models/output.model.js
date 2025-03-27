@@ -1,5 +1,3 @@
-const Pin = require("./pin.model")
-const Sensor = require("./sensor.model")
 const sequelize = require("../configs/sequelize.config")
 const { DataTypes } = require("sequelize")
 
@@ -31,7 +29,7 @@ const Output = sequelize.define(
 			type: DataTypes.INTEGER,
 			allowNull: true,
 			references: {
-				model: Pin,
+				model: "pins",
 				key: "id",
 			},
 			onDelete: "SET NULL",
@@ -40,7 +38,7 @@ const Output = sequelize.define(
 			type: DataTypes.INTEGER,
 			allowNull: false,
 			references: {
-				model: Sensor,
+				model: "sensors",
 				key: "id",
 			},
 			onDelete: "CASCADE",
@@ -51,11 +49,5 @@ const Output = sequelize.define(
 		tableName: "output",
 	}
 )
-
-// Define relationships
-Pin.hasMany(Output, { foreignKey: "pinId", onDelete: "SET NULL" })
-Sensor.hasMany(Output, { foreignKey: "sensorId", onDelete: "CASCADE" })
-Output.belongsTo(Pin, { foreignKey: "pinId" })
-Output.belongsTo(Sensor, { foreignKey: "sensorId" })
 
 module.exports = Output

@@ -1,4 +1,3 @@
-const MCU = require("./mcu.model")
 const sequelize = require("../configs/sequelize.config")
 const { DataTypes } = require("sequelize")
 
@@ -26,7 +25,7 @@ const Pin = sequelize.define(
 			type: DataTypes.INTEGER,
 			allowNull: false,
 			references: {
-				model: MCU,
+				model: "mcus",
 				key: "id",
 			},
 			onDelete: "CASCADE",
@@ -38,14 +37,11 @@ const Pin = sequelize.define(
 		indexes: [
 			{
 				unique: true,
-				fields: ["mcuId", "type", "number"]
-			}
-		]
+				fields: ["mcuId", "type", "number"],
+			},
+		],
 	}
 )
 
-// Define relationships
-MCU.hasMany(Pin, { foreignKey: "mcuId", onDelete: "CASCADE" })
-Pin.belongsTo(MCU, { foreignKey: "mcuId" })
-
+// Removed relationships
 module.exports = Pin

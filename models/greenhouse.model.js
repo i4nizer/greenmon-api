@@ -1,4 +1,3 @@
-const User = require("./user.model")
 const sequelize = require("../configs/sequelize.config")
 const { DataTypes } = require("sequelize")
 
@@ -22,7 +21,7 @@ const Greenhouse = sequelize.define(
 			type: DataTypes.INTEGER,
 			allowNull: false,
 			references: {
-				model: User,
+				model: "users",
 				key: "id",
 			},
 			onDelete: "CASCADE",
@@ -33,9 +32,5 @@ const Greenhouse = sequelize.define(
 		tableName: "greenhouses",
 	}
 )
-
-// Define relationships
-User.hasMany(Greenhouse, { foreignKey: "userId", onDelete: "CASCADE" })
-Greenhouse.belongsTo(User, { foreignKey: "userId" })
 
 module.exports = Greenhouse

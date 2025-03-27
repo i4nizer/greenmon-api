@@ -1,31 +1,36 @@
 const sequelize = require("../configs/sequelize.config")
 const { DataTypes } = require("sequelize")
 
-const MCU = sequelize.define(
-	"MCU",
+const Condition = sequelize.define(
+	"Condition",
 	{
 		id: {
 			type: DataTypes.INTEGER,
 			primaryKey: true,
 			autoIncrement: true,
 		},
-		name: {
-			type: DataTypes.STRING,
+		type: {
+			type: DataTypes.ENUM("Equal", "Above", "Below"),
 			allowNull: false,
 		},
-		label: {
-			type: DataTypes.STRING,
-			allowNull: true,
-		},
-		key: {
-			type: DataTypes.STRING,
+		value: {
+			type: DataTypes.INTEGER,
 			allowNull: false,
 		},
-		greenhouseId: {
+		outputId: {
 			type: DataTypes.INTEGER,
 			allowNull: false,
 			references: {
-				model: "greenhouses",
+				model: "outputs",
+				key: "id",
+			},
+			onDelete: "CASCADE",
+		},
+		thresholdId: {
+			type: DataTypes.INTEGER,
+			allowNull: false,
+			references: {
+				model: "thresholds",
 				key: "id",
 			},
 			onDelete: "CASCADE",
@@ -33,8 +38,8 @@ const MCU = sequelize.define(
 	},
 	{
 		timestamps: true,
-		tableName: "mcus",
+		tableName: "conditions",
 	}
 )
 
-module.exports = MCU
+module.exports = Condition

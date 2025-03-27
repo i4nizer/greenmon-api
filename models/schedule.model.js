@@ -1,25 +1,25 @@
 const sequelize = require("../configs/sequelize.config")
 const { DataTypes } = require("sequelize")
 
-const MCU = sequelize.define(
-	"MCU",
+const Schedule = sequelize.define(
+	"Schedule",
 	{
 		id: {
 			type: DataTypes.INTEGER,
 			primaryKey: true,
 			autoIncrement: true,
 		},
-		name: {
-			type: DataTypes.STRING,
-			allowNull: false,
+		days: {
+			type: DataTypes.JSON,
+			defaultValue: [],
 		},
-		label: {
-			type: DataTypes.STRING,
-			allowNull: true,
+		times: {
+			type: DataTypes.JSON,
+			defaultValue: [],
 		},
-		key: {
-			type: DataTypes.STRING,
-			allowNull: false,
+		disabled: {
+			type: DataTypes.BOOLEAN,
+			defaultValue: true,
 		},
 		greenhouseId: {
 			type: DataTypes.INTEGER,
@@ -33,8 +33,8 @@ const MCU = sequelize.define(
 	},
 	{
 		timestamps: true,
-		tableName: "mcus",
+		tableName: "schedules",
 	}
 )
 
-module.exports = MCU
+module.exports = Schedule

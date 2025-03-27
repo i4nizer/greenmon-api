@@ -1,6 +1,5 @@
-const MCU = require('./mcu.model');
-const sequelize = require("../configs/sequelize.config");
-const { DataTypes } = require("sequelize");
+const sequelize = require("../configs/sequelize.config")
+const { DataTypes } = require("sequelize")
 
 const Actuator = sequelize.define(
 	"Actuator",
@@ -26,7 +25,7 @@ const Actuator = sequelize.define(
 			type: DataTypes.INTEGER,
 			allowNull: false,
 			references: {
-				model: MCU,
+				model: "mcus",
 				key: "id",
 			},
 			onDelete: "CASCADE",
@@ -38,8 +37,4 @@ const Actuator = sequelize.define(
 	}
 )
 
-// Define relationships
-MCU.hasMany(Actuator, { foreignKey: "mcuId", onDelete: "CASCADE" });
-Actuator.belongsTo(MCU, { foreignKey: "mcuId" });
-
-module.exports = Actuator;
+module.exports = Actuator

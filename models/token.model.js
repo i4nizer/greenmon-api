@@ -1,4 +1,3 @@
-const User = require("./user.model")
 const sequelize = require("../configs/sequelize.config")
 const { DataTypes } = require("sequelize")
 
@@ -30,7 +29,7 @@ const Token = sequelize.define(
 			type: DataTypes.INTEGER,
 			allowNull: false,
 			references: {
-				model: User,
+				model: "users",
 				key: "id",
 			},
 			onDelete: "CASCADE",
@@ -52,9 +51,5 @@ const Token = sequelize.define(
 		],
 	}
 )
-
-// Define relationships
-User.hasMany(Token, { foreignKey: "userId", onDelete: "CASCADE" })
-Token.belongsTo(User, { foreignKey: "userId" })
 
 module.exports = Token

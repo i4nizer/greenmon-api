@@ -1,8 +1,8 @@
 const sequelize = require("../configs/sequelize.config")
 const { DataTypes } = require("sequelize")
 
-const MCU = sequelize.define(
-	"MCU",
+const Threshold = sequelize.define(
+	"Threshold",
 	{
 		id: {
 			type: DataTypes.INTEGER,
@@ -13,13 +13,13 @@ const MCU = sequelize.define(
 			type: DataTypes.STRING,
 			allowNull: false,
 		},
-		label: {
-			type: DataTypes.STRING,
-			allowNull: true,
+		operator: {
+			type: DataTypes.ENUM("Any", "All"),
+			defaultValue: "Any",
 		},
-		key: {
-			type: DataTypes.STRING,
-			allowNull: false,
+		disabled: {
+			type: DataTypes.BOOLEAN,
+			defaultValue: true,
 		},
 		greenhouseId: {
 			type: DataTypes.INTEGER,
@@ -33,8 +33,8 @@ const MCU = sequelize.define(
 	},
 	{
 		timestamps: true,
-		tableName: "mcus",
+		tableName: "thresholds",
 	}
 )
 
-module.exports = MCU
+module.exports = Threshold
