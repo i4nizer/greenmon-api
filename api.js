@@ -1,7 +1,7 @@
 const express = require('express');
 
 const env = require('./configs/env.config')
-const sequelize = require("./configs/sequelize.config")
+const { sequelize } = require("./models/index.model")
 
 const { logger } = require('./utils/logger.util')
 

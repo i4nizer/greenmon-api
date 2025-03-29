@@ -46,7 +46,7 @@ const Output = sequelize.define(
 	},
 	{
 		timestamps: true,
-		tableName: "output",
+		tableName: "outputs",
 	}
 )
 
