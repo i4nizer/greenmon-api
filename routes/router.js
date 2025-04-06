@@ -8,7 +8,7 @@ const { loggerMiddleware } = require("../middlewares/logger.middleware")
 
 const userRoutes = require("./user.route")
 
-router.use(cors({ origin: [env.clientDomain], credentials: true }))
+router.use(cors({ origin: ["*", env.clientDomain], credentials: false }))
 router.use(express.json())
 router.use(loggerMiddleware)
 

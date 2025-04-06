@@ -1,5 +1,6 @@
 const express = require("express")
 const router = express.Router()
+const path = require("path")
 
 const {
 	signUpSchema,
@@ -45,6 +46,7 @@ router.post("/forgot-password", checkJoi(forgotPasswordSchema), postForgotPasswo
 router.post("/reset-password-otp", checkJoi(resetPasswordOTPSchema), postResetPasswordOTP)
 router.post("/reset-password", checkJoi(resetPasswordSchema), postResetPassword)
 
+router.use("/model", checkAccessToken, express.static(path.join(__dirname, "../ai")))
 router.use("/greenhouse", checkAccessToken, greenhouseRoutes)
 
 module.exports = router
