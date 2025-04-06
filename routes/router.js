@@ -1,7 +1,8 @@
-const env = require("../configs/env.config")
 const cors = require("cors")
 const express = require("express")
 const router = express.Router()
+const path = require('path')
+const env = require("../configs/env.config")
 
 const { errorMiddleware } = require("../middlewares/error.middleware")
 const { loggerMiddleware } = require("../middlewares/logger.middleware")
@@ -13,6 +14,7 @@ router.use(express.json())
 router.use(loggerMiddleware)
 
 router.use("/user", userRoutes)
+router.use("/models", express.static(path.join(__dirname, "../models")))
 
 router.use(errorMiddleware)
 
