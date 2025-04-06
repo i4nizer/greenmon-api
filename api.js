@@ -30,7 +30,7 @@ app.use("/", routes);
 
         // Run api after connecting to database
         const url = `http://localhost:${env.port}`
-        app.listen(env.port, () => logger.info(`Api running on ${url}.`))
+        app.listen(env.port, '0.0.0.0', () => logger.info(`Api running on ${url}.`))
 
     } catch (error) {
         
