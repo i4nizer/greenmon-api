@@ -14,7 +14,7 @@ const _morganStream = {
  * Logs all incoming requests.
  */
 const loggerMiddleware = morgan(
-    ":remote-addr :method :url :status :response-time ms - :res[content-length]",
+    ":method :url :status :response-time ms - :res[content-length]",
     { stream: _morganStream }
 )
 
