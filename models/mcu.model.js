@@ -17,10 +17,6 @@ const MCU = sequelize.define(
 			type: DataTypes.STRING,
 			allowNull: true,
 		},
-		key: {
-			type: DataTypes.STRING,
-			allowNull: false,
-		},
 		greenhouseId: {
 			type: DataTypes.INTEGER,
 			allowNull: false,

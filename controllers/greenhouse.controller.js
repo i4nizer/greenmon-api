@@ -1,6 +1,7 @@
-const { where } = require("sequelize")
+const { createToken } = require("../services/token.service")
 const Greenhouse = require("../models/greenhouse.model")
 const { AppError } = require("../utils/app-error.util")
+const env = require("../configs/env.config")
 
 /** Responds with an array of greenhouses. */
 const getGreenhouse = async (req, res, next) => {
@@ -10,7 +11,7 @@ const getGreenhouse = async (req, res, next) => {
 		const filter = greenhouseId ? { id: greenhouseId, userId } : { userId }
 
 		const greenhouseDocs = await Greenhouse.findAll({ where: filter })
-		
+
 		res.json({ greenhouses: greenhouseDocs })
 	} catch (error) {
 		next(error)
@@ -23,7 +24,9 @@ const postGreenhouse = async (req, res, next) => {
 		const { userId } = req.accessTokenPayload
 		const { name, description } = req.body
 
-		const greenhouseDoc = await Greenhouse.create({ userId, name, description })
+		const greenhouseDoc = await Greenhouse.create({ userId, name, description, key: "Temporary Key" })
+		const { tokenStr: key } = await createToken(userId, { greenhouseId: greenhouseDoc.id }, "Api", env.apiLife)
+		await greenhouseDoc.update({ key })
 
 		res.json({
 			text: "Greenhouse created successfully.",
@@ -41,10 +44,7 @@ const patchGreenhouse = async (req, res, next) => {
 		const { greenhouseId, name, description } = req.body
 		const filter = greenhouseId ? { id: greenhouseId, userId } : { userId }
 
-		const [updatedRows] = await Greenhouse.update(
-			{ name, description },
-			{ where: filter }
-		)
+		const [updatedRows] = await Greenhouse.update({ name, description }, { where: filter })
 
 		if (!updatedRows) return next(new AppError(404, "Greenhouse not found."))
 
@@ -59,10 +59,8 @@ const deleteGreenhouse = async (req, res, next) => {
 	try {
 		const { userId } = req.accessTokenPayload
 		const { greenhouseId } = req.query
-		
-		const deletedRows = await Greenhouse.destroy(
-			{ where: { userId, id: greenhouseId } }
-		)
+
+		const deletedRows = await Greenhouse.destroy({ where: { userId, id: greenhouseId } })
 
 		if (!deletedRows) return next(new AppError(404, "Greenhouse not found."))
 
