@@ -61,8 +61,27 @@ const verify = (token, key) => {
 		}
 
 		// other jwt errors
-		throw new AppError(500, "", error, false)
+		throw new AppError(400, "Token is invalid.", error)
 	}
 }
 
-module.exports = { sign, verify }
+/**
+ * Verify and decode a token. Returns error when the token is invalid.
+ *
+ * @param {String} token The token to verify.
+ * @param {'Access'|'Refresh'|'Api'} key The type of key.
+ */
+const decode = (token, key) => {
+	try {
+		// just decode
+		key = _getKey(key)
+		const payload = jwt.decode(token, key)
+
+		return { payload }
+	} catch (error) {
+		// invalid token
+		throw new AppError(400, error?.message, error, true)
+	}
+}
+
+module.exports = { sign, verify, decode }

@@ -1,7 +1,7 @@
 const env = require("../configs/env.config")
 const Token = require("../models/token.model")
 const { AppError } = require("../utils/app-error.util")
-const { sign, verify } = require("../utils/token.util")
+const { sign, verify, decode } = require("../utils/token.util")
 
 /**
  * Note that the token hash will be the one inserted.
@@ -61,7 +61,35 @@ const verifyToken = async (tokenStr, type, revoke = false) => {
 	return { payload, tokenDoc }
 }
 
+/**
+ * Revokes the token provided.
+ *
+ * @param {String} tokenStr The token to validate.
+ * @param {"Access"|"Refresh"|"Api"} type The type of token to be stored.
+ */
+const revokeToken = async (tokenStr, type) => {
+	// verify string first
+	const { payload } = decode(tokenStr, type)
+	const { userId } = payload
+
+	// check if the token is revoked/blacklisted
+	const tokenDoc = await Token.findOne({ where: { userId, type } })
+
+	// not existing, its invalid
+	if (!tokenDoc) throw new AppError(404, "Token not found.")
+
+	// blacklisted
+	if (tokenDoc.revoked) throw new AppError(403, "Token is already blacklisted.")
+
+	// revoke
+	await tokenDoc.update({ revoked: true })
+
+	// all okay, give payload
+	return { payload, tokenDoc }
+}
+
 module.exports = {
 	createToken,
 	verifyToken,
+	revokeToken,
 }
