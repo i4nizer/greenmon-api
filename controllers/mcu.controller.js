@@ -57,14 +57,11 @@ const postMcu = async (req, res, next) => {
 const patchMcu = async (req, res, next) => {
     try {
         const { mcuId, name, label } = req.body
-        const filter = { id: mcuId }
 
-        const [updatedRows] = await MCU.update(
-            { name, label },
-            { where: filter }
-        )
-
-        if (!updatedRows) return next(new AppError(404, "MCU not found."))
+        const mcuDoc = await MCU.findByPk(mcuId)
+        if (!mcuDoc) return next(new AppError(404, "MCU not found."))
+        
+        await mcuDoc.update({ name, label })
 
         res.json({ text: "MCU updated successfully." })
     } catch (error) {
@@ -77,11 +74,10 @@ const deleteMcu = async (req, res, next) => {
     try {
         const { mcuId } = req.query
 
-        const deletedRows = await MCU.destroy(
-            { where: { id: mcuId } }
-        )
+        const mcuDoc = await MCU.findByPk(mcuId)
+        if (!mcuDoc) return next(new AppError(404, "MCU not found."))
 
-        if (!deletedRows) return next(new AppError(404, "MCU not found."))
+        await mcuDoc.destroy();
 
         res.json({ text: "MCU deleted successfully." })
     } catch (error) {

@@ -45,14 +45,11 @@ const postSensor = async (req, res, next) => {
 const patchSensor = async (req, res, next) => {
     try {
         const { sensorId, name, label, interval, disabled } = req.body
-        const filter = { id: sensorId }
 
-        const [updatedRows] = await Sensor.update(
-            { name, label, interval, disabled },
-            { where: filter }
-        )
+        const sensorDoc = await Sensor.findByPk(sensorId)
+		if (!sensorDoc) return next(new AppError(404, "Sensor not found."))
 
-        if (!updatedRows) return next(new AppError(404, "Sensor not found."))
+		await sensorDoc.update({ name, label, interval, disabled })
 
         res.json({ text: "Sensor updated successfully." })
     } catch (error) {
@@ -65,11 +62,10 @@ const deleteSensor = async (req, res, next) => {
     try {
         const { sensorId } = req.query
 
-        const deletedRows = await Sensor.destroy(
-            { where: { id: sensorId } }
-        )
-
-        if (!deletedRows) return next(new AppError(404, "Sensor not found."))
+        const sensorDoc = await Sensor.findByPk(sensorId)
+        if (!sensorDoc) return next(new AppError(404, "Sensor not found."))
+        
+        await sensorDoc.destroy()
 
         res.json({ text: "Sensor deleted successfully." })
     } catch (error) {

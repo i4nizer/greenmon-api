@@ -45,15 +45,12 @@ const postSchedule = async (req, res, next) => {
 const patchSchedule = async (req, res, next) => {
     try {
         const { scheduleId, name, days, times, disabled } = req.body
-        const filter = { id: scheduleId }
 
-        const [updatedRows] = await Schedule.update(
-            { name, days, times, disabled },
-            { where: filter }
-        )
+        const scheduleDoc = await Schedule.findByPk(scheduleId)
+		if (!scheduleDoc) return next(new AppError(404, "Schedule not found."))
 
-        if (!updatedRows) return next(new AppError(404, "Schedule not found."))
-
+		await scheduleDoc.update({ name, days, times, disabled })
+        
         res.json({ text: "Schedule updated successfully." })
     } catch (error) {
         next(error)
@@ -65,12 +62,11 @@ const deleteSchedule = async (req, res, next) => {
     try {
         const { scheduleId } = req.query
 
-        const deletedRows = await Schedule.destroy(
-            { where: { id: scheduleId } }
-        )
+        const scheduleDoc = await Schedule.findByPk(scheduleId)
+        if (!scheduleDoc) return next(new AppError(404, "Schedule not found."))
 
-        if (!deletedRows) return next(new AppError(404, "Schedule not found."))
-
+        await scheduleDoc.destroy()
+        
         res.json({ text: "Schedule deleted successfully." })
     } catch (error) {
         next(error)

@@ -45,14 +45,11 @@ const postThreshold = async (req, res, next) => {
 const patchThreshold = async (req, res, next) => {
     try {
         const { thresholdId, name, operator, disabled } = req.body
-        const filter = { id: thresholdId }
 
-        const [updatedRows] = await Threshold.update(
-            { name, operator, disabled },
-            { where: filter }
-        )
+        const thresholdDoc = await Threshold.findByPk(thresholdId)
+		if (!thresholdDoc) return next(new AppError(404, "Threshold not found."))
 
-        if (!updatedRows) return next(new AppError(404, "Threshold not found."))
+		await thresholdDoc.update({ name, operator, disabled })
 
         res.json({ text: "Threshold updated successfully." })
     } catch (error) {
@@ -65,11 +62,10 @@ const deleteThreshold = async (req, res, next) => {
     try {
         const { thresholdId } = req.query
 
-        const deletedRows = await Threshold.destroy(
-            { where: { id: thresholdId } }
-        )
+        const thresholdDoc = await Threshold.findByPk(thresholdId)
+        if (!thresholdDoc) return next(new AppError(404, "Threshold not found."))
 
-        if (!deletedRows) return next(new AppError(404, "Threshold not found."))
+        await thresholdDoc.destroy()
 
         res.json({ text: "Threshold deleted successfully." })
     } catch (error) {

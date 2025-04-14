@@ -45,14 +45,11 @@ const postCondition = async (req, res, next) => {
 const patchCondition = async (req, res, next) => {
     try {
         const { conditionId, type, value, outputId } = req.body
-        const filter = { id: conditionId }
 
-        const [updatedRows] = await Condition.update(
-            { type, value, outputId },
-            { where: filter }
-        )
+        const conditionDoc = await Condition.findByPk(conditionId)
+		if (!conditionDoc) return next(new AppError(404, "Condition not found."))
 
-        if (!updatedRows) return next(new AppError(404, "Condition not found."))
+		await conditionDoc.update({ type, value, outputId })
 
         res.json({ text: "Condition updated successfully." })
     } catch (error) {
@@ -65,11 +62,10 @@ const deleteCondition = async (req, res, next) => {
     try {
         const { conditionId } = req.query
 
-        const deletedRows = await Condition.destroy(
-            { where: { id: conditionId } }
-        )
+        const conditionDoc = await Condition.findByPk(conditionId)
+        if (!conditionDoc) return next(new AppError(404, "Condition not found."))
 
-        if (!deletedRows) return next(new AppError(404, "Condition not found."))
+        await conditionDoc.destroy()
 
         res.json({ text: "Condition deleted successfully." })
     } catch (error) {

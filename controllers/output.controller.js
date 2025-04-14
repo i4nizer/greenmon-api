@@ -78,12 +78,8 @@ const patchOutput = async (req, res, next) => {
         // Update pin mode to "Output"
         await pinDoc.update({ mode: "Output" })
 
-        const [updatedRows] = await Output.update(
-            { icon, name, unit, type, pinId },
-            { where: filter }
-        )
-
-        if (!updatedRows) return next(new AppError(404, "Output not found."))
+        // Finally update output
+        await outputDoc.update({ icon, name, unit, type, pinId })
 
         res.json({ text: "Output updated successfully." })
     } catch (error) {
@@ -104,11 +100,7 @@ const deleteOutput = async (req, res, next) => {
         const pinDoc = await Pin.findByPk(outputDoc.pinId)
         if (pinDoc) await pinDoc.update({ mode: "Unset" })
 
-        const deletedRows = await Output.destroy(
-            { where: { id: outputId } }
-        )
-
-        if (!deletedRows) return next(new AppError(404, "Output not found."))
+        await outputDoc.destroy()
 
         res.json({ text: "Output deleted successfully." })
     } catch (error) {

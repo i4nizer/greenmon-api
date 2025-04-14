@@ -45,14 +45,11 @@ const postActuator = async (req, res, next) => {
 const patchActuator = async (req, res, next) => {
     try {
         const { actuatorId, name, label } = req.body;
-        const filter = { id: actuatorId };
+        
+        const actuatorDoc = await Actuator.findByPk(actuatorId)
+		if (!actuatorDoc) return next(new AppError(404, "Actuator not found."))
 
-        const [updatedRows] = await Actuator.update(
-            { name, label },
-            { where: filter }
-        );
-
-        if (!updatedRows) return next(new AppError(404, "Actuator not found."));
+		await actuatorDoc.update({ name, label })
 
         res.json({ text: "Actuator updated successfully." });
     } catch (error) {
@@ -65,11 +62,10 @@ const deleteActuator = async (req, res, next) => {
     try {
         const { actuatorId } = req.query;
 
-        const deletedRows = await Actuator.destroy(
-            { where: { id: actuatorId } }
-        );
+        const actuatorDoc = await Actuator.findByPk(actuatorId)
+        if (!actuatorDoc) return next(new AppError(404, "Actuator not found."));
 
-        if (!deletedRows) return next(new AppError(404, "Actuator not found."));
+        await actuatorDoc.destroy()
 
         res.json({ text: "Actuator deleted successfully." });
     } catch (error) {

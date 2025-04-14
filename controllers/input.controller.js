@@ -53,7 +53,6 @@ const postInput = async (req, res, next) => {
 const patchInput = async (req, res, next) => {
     try {
         const { inputId, icon, name, type, flag, status, pinId } = req.body;
-        const filter = { id: inputId };
 
         // Find input
         const inputDoc = await Input.findByPk(inputId);
@@ -80,12 +79,8 @@ const patchInput = async (req, res, next) => {
         // Update pin mode to "Input"
         await pinDoc.update({ mode: "Input" });
 
-        const [updatedRows] = await Input.update(
-            { icon, name, type, flag, status, pinId },
-            { where: filter }
-        );
-
-        if (!updatedRows) return next(new AppError(404, "Input not found."));
+        // Finally update input
+        await inputDoc.update({ icon, name, type, flag, status, pinId })
 
         res.json({ text: "Input updated successfully." });
     } catch (error) {
@@ -106,11 +101,7 @@ const deleteInput = async (req, res, next) => {
         const pinDoc = await Pin.findByPk(inputDoc.pinId);
         if (pinDoc) await pinDoc.update({ mode: "Unset" });
 
-        const deletedRows = await Input.destroy(
-            { where: { id: inputId } }
-        );
-
-        if (!deletedRows) return next(new AppError(404, "Input not found."));
+        await inputDoc.destroy()
 
         res.json({ text: "Input deleted successfully." });
     } catch (error) {

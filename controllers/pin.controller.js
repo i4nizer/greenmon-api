@@ -45,14 +45,11 @@ const postPin = async (req, res, next) => {
 const patchPin = async (req, res, next) => {
     try {
         const { pinId, type, mode, number } = req.body
-        const filter = { id: pinId }
 
-        const [updatedRows] = await Pin.update(
-            { type, mode, number },
-            { where: filter }
-        )
+        const pinDoc = await Pin.findByPk(pinId)
+		if (!pinDoc) return next(new AppError(404, "Pin not found."))
 
-        if (!updatedRows) return next(new AppError(404, "Pin not found."))
+		await pinDoc.update({ type, mode, number })
 
         res.json({ text: "Pin updated successfully." })
     } catch (error) {
@@ -65,11 +62,10 @@ const deletePin = async (req, res, next) => {
     try {
         const { pinId } = req.query
 
-        const deletedRows = await Pin.destroy(
-            { where: { id: pinId } }
-        )
+        const pinDoc = await Pin.findByPk(pinId)
+        if (!pinDoc) return next(new AppError(404, "Pin not found."))
 
-        if (!deletedRows) return next(new AppError(404, "Pin not found."))
+        await pinDoc.destroy()
 
         res.json({ text: "Pin deleted successfully." })
     } catch (error) {

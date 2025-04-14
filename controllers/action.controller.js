@@ -61,14 +61,11 @@ const postAction = async (req, res, next) => {
 const patchAction = async (req, res, next) => {
 	try {
 		const { actionId, name, value, duration, precedence, inputId, scheduleId, thresholdId } = req.body
-		const filter = { id: actionId }
 
-		const [updatedRows] = await Action.update(
-			{ name, value, duration, precedence, inputId, scheduleId, thresholdId },
-			{ where: filter }
-		)
+		const actionDoc = await Action.findByPk(actionId)
+		if (!actionDoc) return next(new AppError(404, "Action not found."))
 
-		if (!updatedRows) return next(new AppError(404, "Action not found."))
+		await actionDoc.update({ name, value, duration, precedence, inputId, scheduleId, thresholdId })
 
 		res.json({ text: "Action updated successfully." })
 	} catch (error) {
@@ -81,9 +78,10 @@ const deleteAction = async (req, res, next) => {
 	try {
 		const { actionId } = req.query
 
-		const deletedRows = await Action.destroy({ where: { id: actionId } })
+		const actionDoc = await Action.findByPk(actionId)
+		if (!actionDoc) return next(new AppError(404, "Action not found."))
 
-		if (!deletedRows) return next(new AppError(404, "Action not found."))
+		await actionDoc.destroy()
 
 		res.json({ text: "Action deleted successfully." })
 	} catch (error) {
