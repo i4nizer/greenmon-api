@@ -1,4 +1,5 @@
 const express = require('express');
+const { bindExpressApp } = require('./ws/index.ws')
 
 const env = require('./configs/env.config')
 const { sequelize } = require("./models/index.model")
@@ -12,6 +13,7 @@ const routes = require("./routes/router")
  * Initalize app, parser, logger, security, routes, and error handler.
  */
 const app = express();
+bindExpressApp(app);
 app.use("/", routes);
 
     
