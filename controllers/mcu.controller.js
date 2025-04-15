@@ -2,6 +2,8 @@ const MCU = require('../models/mcu.model')
 const Pin = require('../models/pin.model')
 const Greenhouse = require('../models/greenhouse.model')
 const { AppError } = require('../utils/app-error.util')
+const { createToken } = require('../services/token.service')
+const env = require('../configs/env.config')
 
 
 
@@ -36,9 +38,12 @@ const getMcu = async (req, res, next) => {
 /** Responds with create success. */
 const postMcu = async (req, res, next) => {
     try {
+        const { userId } = req.accessTokenPayload
         const { name, label, pins, greenhouseId } = req.body
 
         const mcuDoc = await MCU.create({ name, label, greenhouseId })
+        const { tokenStr: key } = await createToken(userId, { greenhouseId }, "Api", env.apiLife)
+        await mcuDoc.update({ key })
 
         pins.forEach(p => p.mcuId = mcuDoc.id)
         const pinDocs = await Pin.bulkCreate(pins, { validate: true })

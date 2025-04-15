@@ -15,7 +15,7 @@ const _mailDev = async (error) => {
 
 	mail(env.devEmail, subject, text)
 		// can't even mail the dev, pathetic
-		.catch(logger.error("An unexpected error occurred and mail to dev failed.", error))
+		.catch(err => logger.error("An unexpected error occurred and mail to dev failed.", err))
 }
 
 /**
