@@ -14,8 +14,12 @@ const Condition = sequelize.define(
 			allowNull: false,
 		},
 		value: {
-			type: DataTypes.INTEGER,
+			type: DataTypes.FLOAT,
 			allowNull: false,
+		},
+		satisfied: {
+			type: DataTypes.BOOLEAN,
+			defaultValue: false,
 		},
 		outputId: {
 			type: DataTypes.INTEGER,

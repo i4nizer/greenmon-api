@@ -17,6 +17,8 @@ const Action = require("./action.model")
 const Threshold = require("./threshold.model")
 const Condition = require("./condition.model")
 
+const Reading = require("./reading.model")
+
 
 
 // Define User relationships
@@ -56,6 +58,7 @@ Sensor.hasMany(Output, { foreignKey: "sensorId", onDelete: "CASCADE" })
 Output.belongsTo(Pin, { foreignKey: "pinId" })
 Output.belongsTo(Sensor, { foreignKey: "sensorId" })
 Output.hasMany(Condition, { foreignKey: "outputId", onDelete: "CASCADE" })
+Output.hasMany(Reading, { foreignKey: "outputId", onDelete: "SET NULL" })
 
 // Define Actuator relationships
 Actuator.belongsTo(MCU, { foreignKey: "mcuId" })
@@ -94,6 +97,10 @@ Action.belongsTo(Schedule, { foreignKey: "scheduleId" })
 Action.belongsTo(Threshold, { foreignKey: "thresholdId" })
 
 
+// Define Reading relationships
+Reading.belongsTo(Output, { foreignKey: "outputId" })
+
+
 
 // Export models
 module.exports = {
@@ -115,4 +122,6 @@ module.exports = {
     Action,
     Threshold,
     Condition,
+
+    Reading,
 }

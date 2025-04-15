@@ -17,6 +17,10 @@ const Threshold = sequelize.define(
 			type: DataTypes.ENUM("Any", "All"),
 			defaultValue: "Any",
 		},
+		activated: {
+			type: DataTypes.BOOLEAN,
+			defaultValue: false,
+		},
 		disabled: {
 			type: DataTypes.BOOLEAN,
 			defaultValue: true,
