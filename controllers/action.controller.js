@@ -2,18 +2,20 @@ const Input = require("../models/input.model")
 const Action = require("../models/action.model")
 const Schedule = require("../models/schedule.model")
 const { AppError } = require("../utils/app-error.util")
+const Threshold = require("../models/threshold.model")
 
 
 
 /** Responds with an array of actions. */
 const getAction = async (req, res, next) => {
 	try {
-		const { scheduleId, thresholdId, actionId } = req.query
+		const { actionId, scheduleId, thresholdId, greenhouseId } = req.query
 
 		const filter = {
+			...(actionId && { id: actionId }),
 			...(scheduleId && { scheduleId }),
 			...(thresholdId && { thresholdId }),
-			...(actionId && { id: actionId }),
+			...(greenhouseId && { greenhouseId }),
 		}
 
 		const actionDocs = await Action.findAll({
@@ -30,12 +32,13 @@ const getAction = async (req, res, next) => {
 /** Responds with create success. */
 const postAction = async (req, res, next) => {
 	try {
-		const { name, value, duration, precedence, inputId, scheduleId, thresholdId } = req.body
+		const { name, value, duration, precedence, inputId, scheduleId, thresholdId, greenhouseId } = req.body
 
-		if (!scheduleId && !thresholdId) {
-			return next(new AppError(400, "An action must reference a schedule or a threshold."))
+		if (thresholdId) {
+			const thresholdDoc = await Threshold.findByPk(thresholdId)
+			if (!thresholdDoc) return next(new AppError(404, "Threshold not found."))
 		}
-
+		
 		if (scheduleId) {
 			const scheduleDoc = await Schedule.findByPk(scheduleId)
 			if (!scheduleDoc) return next(new AppError(404, "Schedule not found."))
@@ -46,7 +49,7 @@ const postAction = async (req, res, next) => {
 			if (!inputDoc) return next(new AppError(404, "Input not found."))
 		}
 
-		const actionDoc = await Action.create({ name, value, duration, precedence, inputId, scheduleId, thresholdId })
+		const actionDoc = await Action.create({ name, value, duration, precedence, inputId, scheduleId, thresholdId, greenhouseId })
 
 		res.json({
 			text: "Action created successfully.",

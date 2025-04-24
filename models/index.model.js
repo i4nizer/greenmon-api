@@ -5,10 +5,14 @@ const OTP = require("./otp.model")
 const Token = require("./token.model")
 
 const Greenhouse = require("./greenhouse.model")
+
 const MCU = require("./mcu.model")
 const Pin = require("./pin.model")
+
 const Sensor = require("./sensor.model")
+const Hook = require("./hook.model")
 const Output = require("./output.model")
+
 const Actuator = require("./actuator.model")
 const Input = require("./input.model")
 
@@ -17,6 +21,7 @@ const Action = require("./action.model")
 const Threshold = require("./threshold.model")
 const Condition = require("./condition.model")
 
+const Log = require("./log.model")
 const Reading = require("./reading.model")
 
 
@@ -38,6 +43,7 @@ Greenhouse.belongsTo(User, { foreignKey: "userId" })
 Greenhouse.hasMany(MCU, { foreignKey: "greenhouseId", onDelete: "CASCADE" })
 Greenhouse.hasMany(Schedule, { foreignKey: "greenhouseId", onDelete: "CASCADE" })
 Greenhouse.hasMany(Threshold, { foreignKey: "greenhouseId", onDelete: "CASCADE" })
+Greenhouse.hasMany(Log, { foreignKey: "greenhouseId", onDelete: "CASCADE" })
 
 // Define MCU relationships
 MCU.belongsTo(Greenhouse, { foreignKey: "greenhouseId" })
@@ -53,6 +59,10 @@ Pin.hasMany(Output, { foreignKey: "pinId", onDelete: "SET NULL" })
 // Define Sensor relationships
 Sensor.belongsTo(MCU, { foreignKey: "mcuId" })
 Sensor.hasMany(Output, { foreignKey: "sensorId", onDelete: "CASCADE" })
+Sensor.hasMany(Hook, { foreignKey: "sensorId", onDelete: "CASCADE" })
+
+// Define Hook relationships
+Hook.belongsTo(Sensor, { foreignKey: "sensorId" })
 
 // Define Output relationships
 Output.belongsTo(Pin, { foreignKey: "pinId" })
@@ -95,7 +105,11 @@ Condition.belongsTo(Threshold, { foreignKey: "thresholdId" })
 Action.belongsTo(Input, { foreignKey: "inputId" })
 Action.belongsTo(Schedule, { foreignKey: "scheduleId" })
 Action.belongsTo(Threshold, { foreignKey: "thresholdId" })
+Action.belongsTo(Greenhouse, { foreignKey: "greenhouseId" })
 
+
+// Define Log relationships
+Log.belongsTo(Greenhouse, { foreignKey: "greenhouseId" })
 
 // Define Reading relationships
 Reading.belongsTo(Output, { foreignKey: "outputId" })
@@ -111,10 +125,14 @@ module.exports = {
     Token,
 
     Greenhouse,
+    
     MCU,
     Pin,
+    
     Sensor,
+    Hook,
     Output,
+    
     Actuator,
     Input,
 
@@ -123,5 +141,6 @@ module.exports = {
     Threshold,
     Condition,
 
+    Log,
     Reading,
 }

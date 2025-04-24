@@ -4,6 +4,7 @@ const Joi = require("joi")
 const getActionSchema = Joi.object({
     scheduleId: Joi.number().integer().optional(),
     thresholdId: Joi.number().integer().optional(),
+    greenhouseId: Joi.number().integer().optional(),
     actionId: Joi.number().integer().optional(),
 })
 
@@ -11,24 +12,28 @@ const getActionSchema = Joi.object({
 const postActionSchema = Joi.object({
     name: Joi.string().required(),
     value: Joi.number().integer().required(),
+    delay: Joi.number().integer().optional(),
     duration: Joi.number().integer().required(),
     precedence: Joi.number().integer().optional(),
     inputId: Joi.number().integer().required(),
     scheduleId: Joi.number().integer().optional(),
     thresholdId: Joi.number().integer().optional(),
-}).or("scheduleId", "thresholdId")
+    greenhouseId: Joi.number().integer().optional(),
+})
 
 /** Requires actionId and optionally other fields. */
 const patchActionSchema = Joi.object({
-    actionId: Joi.number().integer().required(),
-    name: Joi.string().optional(),
-    value: Joi.number().integer().optional(),
-    duration: Joi.number().integer().optional(),
-    precedence: Joi.number().integer().optional(),
-    inputId: Joi.number().integer().optional(),
-    scheduleId: Joi.number().integer().optional(),
-    thresholdId: Joi.number().integer().optional(),
-}).or("scheduleId", "thresholdId")
+	actionId: Joi.number().integer().required(),
+	name: Joi.string().optional(),
+	value: Joi.number().integer().optional(),
+	delay: Joi.number().integer().optional(),
+	duration: Joi.number().integer().optional(),
+	precedence: Joi.number().integer().optional(),
+	inputId: Joi.number().integer().optional(),
+	scheduleId: Joi.number().integer().optional(),
+	thresholdId: Joi.number().integer().optional(),
+	greenhouseId: Joi.number().integer().optional(),
+})
 
 /** Requires actionId. */
 const deleteActionSchema = Joi.object({

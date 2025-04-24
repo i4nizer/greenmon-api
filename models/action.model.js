@@ -17,6 +17,10 @@ const Action = sequelize.define(
 			type: DataTypes.INTEGER,
 			allowNull: false,
 		},
+		delay: {
+			type: DataTypes.INTEGER,
+			defaultValue: 0,
+		},
 		duration: {
 			type: DataTypes.INTEGER,
 			allowNull: false,
@@ -52,17 +56,19 @@ const Action = sequelize.define(
 			},
 			onDelete: "SET NULL",
 		},
+		greenhouseId: {
+			type: DataTypes.INTEGER,
+			allowNull: false,
+			references: {
+				model: "greenhouses",
+				key: "id",
+			},
+			onDelete: "CASCADE",
+		},
 	},
 	{
 		timestamps: true,
 		tableName: "actions",
-		validate: {
-			mustHaveScheduleOrThreshold() {
-				if (!this.scheduleId && !this.thresholdId) {
-					throw new Error("An action must reference a schedule or a threshold.")
-				}
-			},
-		},
 	}
 )
 
