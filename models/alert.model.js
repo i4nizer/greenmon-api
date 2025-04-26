@@ -1,8 +1,8 @@
 const sequelize = require("../configs/sequelize.config")
 const { DataTypes } = require("sequelize")
 
-const Log = sequelize.define(
-	"Log",
+const Alert = sequelize.define(
+	"Alert",
 	{
 		id: {
 			type: DataTypes.INTEGER,
@@ -17,6 +17,14 @@ const Log = sequelize.define(
 			type: DataTypes.STRING,
 			allowNull: false,
 		},
+        viewed: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: false,
+        },
+        emailed: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: false,
+        },
 		greenhouseId: {
 			type: DataTypes.INTEGER,
 			allowNull: true,
@@ -25,12 +33,21 @@ const Log = sequelize.define(
 				key: "id",
 			},
 			onDelete: "SET NULL",
-		},
+        },
+		userId: {
+			type: DataTypes.INTEGER,
+			allowNull: true,
+			references: {
+				model: "users",
+				key: "id",
+			},
+			onDelete: "CASCADE",
+        },
 	},
 	{
 		timestamps: true,
-		tableName: "logs",
+		tableName: "alerts",
 	}
 )
 
-module.exports = Log
+module.exports = Alert

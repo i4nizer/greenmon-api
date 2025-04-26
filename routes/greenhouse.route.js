@@ -19,7 +19,9 @@ const mcuRoutes = require("./mcu.route")
 const actionRoutes = require("./action.route")
 const scheduleRoutes = require("./schedule.route")
 const thresholdRoutes = require("./threshold.route")
-    
+const logRoutes = require("./log.route")
+const alertRoutes = require("./alert.route")
+
     
 
 router.route("/")
@@ -32,6 +34,8 @@ router.use("/mcu", mcuRoutes)
 router.use("/action", actionRoutes)
 router.use("/schedule", scheduleRoutes)
 router.use("/threshold", thresholdRoutes)
+router.use("/log", logRoutes)
+router.use("/alert", alertRoutes)
 
 
 

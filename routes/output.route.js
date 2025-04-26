@@ -7,6 +7,8 @@ const { checkJoi } = require('../middlewares/joi.middleware');
 
 const { getOutput, postOutput, patchOutput, deleteOutput } = require('../controllers/output.controller');
 
+const readingRoutes = require('./reading.route');
+
 
 
 router.route('/')
@@ -14,6 +16,8 @@ router.route('/')
     .post(checkJoi(postOutputSchema), postOutput)
     .patch(checkJoi(patchOutputSchema), patchOutput)
     .delete(checkJoi(deleteOutputSchema, "Query"), deleteOutput);
+
+router.use('/reading', readingRoutes);
 
 
 
