@@ -5,12 +5,14 @@ const { getReadingSchema } = require("../validations/reading.validation")
 
 const { checkJoi } = require("../middlewares/joi.middleware")
 
-const { getReading } = require("../controllers/reading.controller")
+const { getReading, getReadingCsv } = require("../controllers/reading.controller")
 
 
 
 router.route("/")
     .get(checkJoi(getReadingSchema, "Query"), getReading)
+router.route("/csv")
+    .get(checkJoi(getReadingSchema, "Query"), getReadingCsv)
 
 
 

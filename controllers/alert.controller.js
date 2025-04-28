@@ -4,11 +4,12 @@ const { AppError } = require("../utils/app-error.util")
 /** Responds with an array of alerts. */
 const getAlert = async (req, res, next) => {
 	try {
-		const { greenhouseId, userId, startdt, enddt, limit } = req.query
+		const { userId } = req.accessTokenPayload
+		const { greenhouseId, startdt, enddt, limit } = req.query
 
 		const filter = {
-			...(greenhouseId && { greenhouseId }),
 			...(userId && { userId }),
+			...(greenhouseId && { greenhouseId }),
 			...(startdt && { createdAt: { [Alert.sequelize.Op.gte]: new Date(startdt) } }),
 			...(enddt && { createdAt: { [Alert.sequelize.Op.lte]: new Date(enddt) } }),
 		}

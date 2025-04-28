@@ -17,6 +17,10 @@ const Alert = sequelize.define(
 			type: DataTypes.STRING,
 			allowNull: false,
 		},
+		severity: {
+			type: DataTypes.ENUM("Info", "Success", "Warning", "Error"),
+			defaultValue: "Info"
+		},
         viewed: {
             type: DataTypes.BOOLEAN,
             defaultValue: false,

@@ -1,4 +1,5 @@
 const sequelize = require("../configs/sequelize.config")
+const sequelizeStream = require("node-sequelize-stream")
 
 const User = require("./user.model")
 const OTP = require("./otp.model")
@@ -114,6 +115,9 @@ Log.belongsTo(Greenhouse, { foreignKey: "greenhouseId" })
 // Define Reading relationships
 Reading.belongsTo(Output, { foreignKey: "outputId" })
 
+
+// Allow data streaming
+sequelizeStream(sequelize, 100, true)
 
 
 // Export models
