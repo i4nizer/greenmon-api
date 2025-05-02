@@ -5,7 +5,7 @@ node_modules/
 logs/
 
 # Keep Local Uploads
-uploads/
+images/
 
 # Environment Variables
 *.env

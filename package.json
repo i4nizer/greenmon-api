@@ -10,6 +10,8 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@tensorflow/tfjs-node": "^4.22.0",
+    "base64-img": "^1.0.4",
     "cors": "^2.8.5",
     "csv-stringify": "^6.5.2",
     "dotenv": "^16.4.7",

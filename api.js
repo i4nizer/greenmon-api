@@ -5,6 +5,7 @@ const env = require('./configs/env.config')
 const { sequelize } = require("./models/index.model")
 
 const { logger } = require('./utils/logger.util')
+const { load: loadDetectionModel } = require('./utils/detection.util')
 
 const routes = require("./routes/router")
 
@@ -22,7 +23,7 @@ app.use("/", routes);
  */;
 (async () => {
     try {
-        // Attempt connecting to mongodb
+        // Attempt connecting to database
         await sequelize.authenticate();
         logger.info("Database connected successfully.");
         
@@ -30,14 +31,18 @@ app.use("/", routes);
         await sequelize.sync({ alter: true });
         logger.info("Database tables created successfully.");
 
-        // Run api after connecting to database
+        // Load model for detection
+        await loadDetectionModel()
+        logger.info("Lettuce NPK detection model loaded successfully.");
+        
+        // Run api after loads
         const url = `http://localhost:${env.port}`
         app.listen(env.port, '0.0.0.0', () => logger.info(`Api running on ${url}.`))
 
     } catch (error) {
         
         // whatever happened, log it
-        logger.error("Unexpected error occurred during initialization.", error);
-        process.exit(0);
+        logger.error(error?.message ?? "Unexpected error occurred during initialization.", error);
+        setTimeout(() => process.exit(0), 500)
     }    
 })()
