@@ -10,11 +10,11 @@ const getReading = async (req, res, next) => {
 	try {
 		const { outputId, startdt, enddt, limit } = req.query
 
-		const filter = {
-			...(outputId && { outputId }),
-			...(startdt && { createdAt: { [Op.gte]: new Date(startdt) } }),
-			...(enddt && { createdAt: { [Op.lte]: new Date(enddt) } }),
-		}
+		const filter = { ...(outputId && { outputId }) }
+
+		if (startdt && enddt) filter.createdAt = { [Op.gte]: new Date(startdt), [Op.lte]: new Date(enddt) }
+		else if (startdt) filter.createdAt = { [Op.gte]: new Date(startdt) }
+		else if (enddt) filter.createdAt = { [Op.lte]: new Date(enddt) }
 
 		const readingDocs = await Reading.findAll({
 			where: filter,
@@ -23,6 +23,7 @@ const getReading = async (req, res, next) => {
 		})
 
 		res.json({ readings: readingDocs.reverse() })
+
 	} catch (error) {
 		next(error)
 	}
@@ -33,10 +34,11 @@ const getReadingCsv = async (req, res, next) => {
 	try {
 		const { sensorId, startdt, enddt, limit } = req.query
 
-		const filter = {
-			...(startdt && { createdAt: { [Op.gte]: new Date(startdt) } }),
-			...(enddt && { createdAt: { [Op.lte]: new Date(enddt) } }),
-		}
+		const filter = { createdAt: { [Op.ne]: null } }
+
+		if (startdt && enddt) filter.createdAt = { [Op.gte]: new Date(startdt), [Op.lte]: new Date(enddt) }
+		else if (startdt) filter.createdAt = { [Op.gte]: new Date(startdt) }
+		else if (enddt) filter.createdAt = { [Op.lte]: new Date(enddt) }
 
 		const stream = await Reading.findAllWithStream({
 			where: filter,
