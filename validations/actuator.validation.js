@@ -8,9 +8,10 @@ const getActuatorSchema = Joi.object({
 
 /** Requires name, label, and mcuId. */
 const postActuatorSchema = Joi.object({
-    name: Joi.string().min(3).max(100).required(),
-    label: Joi.string().min(3).max(100).required(),
-    mcuId: Joi.string().required(),
+	name: Joi.string().min(3).max(100).required(),
+	label: Joi.string().min(3).max(100).required(),
+	disabled: Joi.boolean().optional(),
+	mcuId: Joi.string().required(),
 })
 
 /** Requires actuatorId and optionally name and label. */
@@ -18,6 +19,7 @@ const patchActuatorSchema = Joi.object({
     actuatorId: Joi.string().required(),
     name: Joi.string().min(3).max(100).optional(),
     label: Joi.string().min(3).max(100).optional(),
+    disabled: Joi.boolean().optional(),
 })
 
 /** Requires actuatorId. */
