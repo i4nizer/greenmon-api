@@ -112,6 +112,8 @@ const craftAccountConfirmationMail = (name, otp) => {
     return { subject, text }
 }
 
+
+
 /**
  * Craft an email message to notify successful sign in.
  * 
@@ -175,6 +177,32 @@ const craftSuccessfulSignOutMail = (name, datetime = new Date()) => {
 
 
 
+/**
+ * Craft an email message to notify a user about an alert.
+ * 
+ * @param {String} name The name of the recipient.
+ * @param {String} title The alert title.
+ * @param {String} message The alert message.
+ * @param {String} severity The severity level (Info, Success, Warning, Error).
+ */
+const craftAlertEmail = (name, title, message, severity = "Info") => {
+    let subject = `Alert - ${severity} - Greenmon`
+
+    let text = `Hi ${name},\n`
+    text += "You have a new alert from your Greenmon system.\n\n"
+    text += `Title: ${title}\n`
+    text += `Message: ${message}\n`
+    text += `Severity: ${severity}\n\n`
+    text += "Please check your dashboard for more details.\n"
+    text += "Need help? Contact our support team.\n"
+    text += "Best,\n"
+    text += "The Greenmon Team"
+
+    return { subject, text }
+}
+
+
+
 module.exports = {
     craftUnexpectedErrorMail,
     craftAccountConfirmationMail,
@@ -185,4 +213,6 @@ module.exports = {
     craftSuccessfulSignInMail,
     craftFailedSignInMail,
     craftSuccessfulSignOutMail,
+
+    craftAlertEmail,
 }
