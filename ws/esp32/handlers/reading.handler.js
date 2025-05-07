@@ -1,4 +1,5 @@
 const { Reading } = require("../../../models/index.model")
+const { sendWsEsp32 } = require("../util.ws")
 
 
 
@@ -9,7 +10,7 @@ const { Reading } = require("../../../models/index.model")
  * @param {Array} data The readings sent by esp32.
  */
 const onCreateReading = async (ws, data) => {
-	await Reading.bulkCreate(data)
+    await Reading.bulkCreate(data, { individualHooks: true, source: "esp32" })
 }
 
 
