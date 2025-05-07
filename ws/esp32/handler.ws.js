@@ -1,5 +1,13 @@
 const { logger } = require("../../utils/logger.util");
-const { onCreateReading } = require("./handlers/reading.handler")
+const { onUpdateAction } = require("./handlers/action.handler");
+const { onCreateAlert } = require("./handlers/alert.handler");
+const { onUpdateCondition } = require("./handlers/condition.handler");
+const { onCreateImage } = require("./handlers/image.handler");
+const { onUpdateInput } = require("./handlers/input.handler");
+const { onCreateReading } = require("./handlers/reading.handler");
+const { onUpdateSchedule } = require("./handlers/schedule.handler");
+const { onUpdateSensor } = require("./handlers/sensor.handler");
+const { onUpdateThreshold } = require("./handlers/threshold.handler");
 
 
 
@@ -7,8 +15,17 @@ const { onCreateReading } = require("./handlers/reading.handler")
  * Contains the handlers of events sent by esp32.
  */
 const _wsEsp32HandlerMap = new Map([
-    ['mcu:Create', onCreateReading],
+    ['action:Update', onUpdateAction],
+    ['alert:Create', onCreateAlert],
+    ['condition:Update', onUpdateCondition],
+    ['image:Create', onCreateImage],
+    ['input:Update', onUpdateInput],
+    ['reading:Create', onCreateReading],
+    ['schedule:Update', onUpdateSchedule],
+    ['sensor:Update', onUpdateSensor],
+    ['threshold:Update', onUpdateThreshold],
 ])
+
 
 
 /**
@@ -21,7 +38,7 @@ const executeEsp32Handler = async (ws, event, data, query) => {
     const handler = _wsEsp32HandlerMap.get(`${event}:${query}`)
     if (handler) return await handler(ws, data).catch(error => logger.error(error))
 
-    logger.warn(`Web socket esp32 sent ${event}:${query} ${data?.length} records but no dedicated handler found.`)
+    logger.warn(`Web socket esp32 sent <${event}:${query} ${data?.length}> records but no dedicated handler found.`)
 }
 
 
