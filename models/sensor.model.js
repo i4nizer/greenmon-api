@@ -21,6 +21,14 @@ const Sensor = sequelize.define(
 			type: DataTypes.INTEGER,
 			defaultValue: 15 * 60,
 		},
+		lastread: {
+			type: DataTypes.INTEGER,
+			defaultValue: 0,
+		},
+		readphase: {
+			type: DataTypes.ENUM("Off", "Before", "During", "After"),
+			defaultValue: "Off",
+		},
 		disabled: {
 			type: DataTypes.BOOLEAN,
 			defaultValue: true,

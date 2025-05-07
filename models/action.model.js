@@ -25,9 +25,13 @@ const Action = sequelize.define(
 			type: DataTypes.INTEGER,
 			allowNull: false,
 		},
-		precedence: {
+		priority: {
 			type: DataTypes.INTEGER,
 			defaultValue: 0,
+		},
+		status: {
+			type: DataTypes.ENUM("Inactive", "Delayed", "Active", "Discarded", "Interrupted", "Timeout"),
+			defaultValue: "Inactive",
 		},
 		inputId: {
 			type: DataTypes.INTEGER,

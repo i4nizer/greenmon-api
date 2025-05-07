@@ -1,6 +1,10 @@
 const sequelize = require("../configs/sequelize.config")
 const sequelizeStream = require("node-sequelize-stream")
 
+const { mail } = require("../utils/mail.util")
+const { logger } = require("../utils/logger.util")
+const { craftAlertEmail } = require("../configs/mail.config")
+
 const User = require("./user.model")
 const OTP = require("./otp.model")
 const Token = require("./token.model")
@@ -23,7 +27,10 @@ const Threshold = require("./threshold.model")
 const Condition = require("./condition.model")
 
 const Log = require("./log.model")
+const Alert = require("./alert.model")
+const Image = require("./image.model")
 const Reading = require("./reading.model")
+const Detection = require("./detection.model")
 
 
 
@@ -31,6 +38,7 @@ const Reading = require("./reading.model")
 User.hasMany(OTP, { foreignKey: "userId", onDelete: "CASCADE" })
 User.hasMany(Token, { foreignKey: "userId", onDelete: "CASCADE" })
 User.hasMany(Greenhouse, { foreignKey: "userId", onDelete: "CASCADE" })
+User.hasMany(Alert, { foreignKey: "userId", onDelete: "SET NULL" })
 
 // Define OTP relationships
 OTP.belongsTo(User, { foreignKey: "userId" })
@@ -45,6 +53,7 @@ Greenhouse.hasMany(MCU, { foreignKey: "greenhouseId", onDelete: "CASCADE" })
 Greenhouse.hasMany(Schedule, { foreignKey: "greenhouseId", onDelete: "CASCADE" })
 Greenhouse.hasMany(Threshold, { foreignKey: "greenhouseId", onDelete: "CASCADE" })
 Greenhouse.hasMany(Log, { foreignKey: "greenhouseId", onDelete: "CASCADE" })
+Greenhouse.hasMany(Alert, { foreignKey: "greenhouseId", onDelete: "SET NULL" })
 
 // Define MCU relationships
 MCU.belongsTo(Greenhouse, { foreignKey: "greenhouseId" })
@@ -69,6 +78,7 @@ Hook.belongsTo(Sensor, { foreignKey: "sensorId" })
 Output.belongsTo(Pin, { foreignKey: "pinId" })
 Output.belongsTo(Sensor, { foreignKey: "sensorId" })
 Output.hasMany(Condition, { foreignKey: "outputId", onDelete: "CASCADE" })
+Output.hasMany(Image, { foreignKey: "outputId", onDelete: "SET NULL" })
 Output.hasMany(Reading, { foreignKey: "outputId", onDelete: "SET NULL" })
 
 // Define Actuator relationships
@@ -112,8 +122,31 @@ Action.belongsTo(Greenhouse, { foreignKey: "greenhouseId" })
 // Define Log relationships
 Log.belongsTo(Greenhouse, { foreignKey: "greenhouseId" })
 
+// Define Image relationships
+Image.belongsTo(Output, { foreignKey: "outputId" })
+Image.hasMany(Detection, { foreignKey: "imageId", onDelete: "CASCADE" })
+
 // Define Reading relationships
 Reading.belongsTo(Output, { foreignKey: "outputId" })
+
+// Define Detection relationships
+Detection.belongsTo(Image, { foreignKey: "imageId" })
+
+// Define Alert relationships
+Alert.belongsTo(User, { foreignKey: "userId" })
+Alert.belongsTo(Greenhouse, { foreignKey: "greenhouseId" })
+Alert.afterCreate(async (alert, options) => {
+    try {
+        const user = await User.findByPk(alert.userId)
+        const { subject, text } = craftAlertEmail(user.name, alert.title, alert.message, alert.severity)
+        
+        await mail(user.email, subject, text)
+        alert.emailed = true
+        await Alert.update(alert, { where: { id: alert.id } })
+    } catch (error) {
+        logger.error(error?.message, error)
+    }
+})
 
 
 // Allow data streaming
@@ -146,5 +179,8 @@ module.exports = {
     Condition,
 
     Log,
+    Alert,
+    Image,
     Reading,
+    Detection,
 }

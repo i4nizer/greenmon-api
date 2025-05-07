@@ -21,6 +21,10 @@ const Schedule = sequelize.define(
 			type: DataTypes.JSON,
 			defaultValue: [],
 		},
+		activated: {
+			type: DataTypes.BOOLEAN,
+			defaultValue: false,
+		},
 		disabled: {
 			type: DataTypes.BOOLEAN,
 			defaultValue: true,

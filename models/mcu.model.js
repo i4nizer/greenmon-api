@@ -21,6 +21,10 @@ const MCU = sequelize.define(
 			type: DataTypes.STRING,
 			defaultValue: "Temporary Key",
 		},
+		connected: {
+			type: DataTypes.BOOLEAN,
+			defaultValue: false,
+		},
 		greenhouseId: {
 			type: DataTypes.INTEGER,
 			allowNull: false,
