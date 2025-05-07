@@ -4,7 +4,7 @@ const Schedule = require("../models/schedule.model")
 const { AppError } = require("../utils/app-error.util")
 const Threshold = require("../models/threshold.model")
 
-
+//
 
 /** Responds with an array of actions. */
 const getAction = async (req, res, next) => {
@@ -20,7 +20,7 @@ const getAction = async (req, res, next) => {
 
 		const actionDocs = await Action.findAll({
 			where: filter,
-			order: [["precedence", "DESC"]],
+			order: [["priority", "DESC"]],
 		})
 
 		res.json({ actions: actionDocs })
@@ -32,13 +32,13 @@ const getAction = async (req, res, next) => {
 /** Responds with create success. */
 const postAction = async (req, res, next) => {
 	try {
-		const { name, value, duration, precedence, inputId, scheduleId, thresholdId, greenhouseId } = req.body
+		const { name, value, duration, priority, inputId, scheduleId, thresholdId, greenhouseId } = req.body
 
 		if (thresholdId) {
 			const thresholdDoc = await Threshold.findByPk(thresholdId)
 			if (!thresholdDoc) return next(new AppError(404, "Threshold not found."))
 		}
-		
+
 		if (scheduleId) {
 			const scheduleDoc = await Schedule.findByPk(scheduleId)
 			if (!scheduleDoc) return next(new AppError(404, "Schedule not found."))
@@ -49,7 +49,18 @@ const postAction = async (req, res, next) => {
 			if (!inputDoc) return next(new AppError(404, "Input not found."))
 		}
 
-		const actionDoc = await Action.create({ name, value, duration, precedence, inputId, scheduleId, thresholdId, greenhouseId })
+		const actionDoc = await Action.create({
+			name,
+			value,
+			duration,
+			priority,
+			inputId,
+			scheduleId, 
+			thresholdId, 
+			greenhouseId,
+		}, {
+			source: "client",
+		})
 
 		res.json({
 			text: "Action created successfully.",
@@ -63,12 +74,22 @@ const postAction = async (req, res, next) => {
 /** Responds with update success. */
 const patchAction = async (req, res, next) => {
 	try {
-		const { actionId, name, value, duration, precedence, inputId, scheduleId, thresholdId } = req.body
+		const { actionId, name, value, duration, priority, inputId, scheduleId, thresholdId } = req.body
 
 		const actionDoc = await Action.findByPk(actionId)
 		if (!actionDoc) return next(new AppError(404, "Action not found."))
 
-		await actionDoc.update({ name, value, duration, precedence, inputId, scheduleId, thresholdId })
+		await actionDoc.update({
+			name, 
+			value, 
+			duration, 
+			priority, 
+			inputId, 
+			scheduleId, 
+			thresholdId,
+		}, {
+			source: "client",
+		})
 
 		res.json({ text: "Action updated successfully." })
 	} catch (error) {
@@ -84,7 +105,7 @@ const deleteAction = async (req, res, next) => {
 		const actionDoc = await Action.findByPk(actionId)
 		if (!actionDoc) return next(new AppError(404, "Action not found."))
 
-		await actionDoc.destroy()
+		await actionDoc.destroy({ source: "client" })
 
 		res.json({ text: "Action deleted successfully." })
 	} catch (error) {
@@ -92,7 +113,7 @@ const deleteAction = async (req, res, next) => {
 	}
 }
 
-
+//
 
 module.exports = {
 	getAction,

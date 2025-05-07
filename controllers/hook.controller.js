@@ -1,7 +1,7 @@
 const Hook = require("../models/hook.model")
 const { AppError } = require("../utils/app-error.util")
 
-
+//
 
 /** Responds with an array of hooks. */
 const getHook = async (req, res, next) => {
@@ -69,7 +69,7 @@ const deleteHook = async (req, res, next) => {
 	}
 }
 
-
+//
 
 module.exports = {
 	getHook,

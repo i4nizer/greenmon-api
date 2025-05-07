@@ -2,7 +2,7 @@ const Threshold = require('../models/threshold.model')
 const Greenhouse = require('../models/greenhouse.model')
 const { AppError } = require('../utils/app-error.util')
 
-
+//
 
 /** Responds with an array of thresholds. */
 const getThreshold = async (req, res, next) => {
@@ -30,7 +30,14 @@ const postThreshold = async (req, res, next) => {
         const greenhouseDoc = await Greenhouse.findByPk(greenhouseId)
         if (!greenhouseDoc) return next(new AppError(404, "Greenhouse not found."))
 
-        const thresholdDoc = await Threshold.create({ name, operator, disabled, greenhouseId })
+        const thresholdDoc = await Threshold.create({
+            name, 
+            operator, 
+            disabled, 
+            greenhouseId,
+        }, {
+            source: "client",
+        })
 
         res.json({
             text: "Threshold created successfully.",
@@ -49,7 +56,13 @@ const patchThreshold = async (req, res, next) => {
         const thresholdDoc = await Threshold.findByPk(thresholdId)
 		if (!thresholdDoc) return next(new AppError(404, "Threshold not found."))
 
-		await thresholdDoc.update({ name, operator, disabled })
+        await thresholdDoc.update({
+            name, 
+            operator, 
+            disabled,
+        }, {
+            source: "client",
+        })
 
         res.json({ text: "Threshold updated successfully." })
     } catch (error) {
@@ -65,7 +78,7 @@ const deleteThreshold = async (req, res, next) => {
         const thresholdDoc = await Threshold.findByPk(thresholdId)
         if (!thresholdDoc) return next(new AppError(404, "Threshold not found."))
 
-        await thresholdDoc.destroy()
+        await thresholdDoc.destroy({ source: "client" })
 
         res.json({ text: "Threshold deleted successfully." })
     } catch (error) {
@@ -73,7 +86,7 @@ const deleteThreshold = async (req, res, next) => {
     }
 }
 
-
+//
 
 module.exports = {
     getThreshold,

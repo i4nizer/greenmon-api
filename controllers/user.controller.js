@@ -12,6 +12,8 @@ const {
 	resetUserPassword,
 } = require("../services/user.service")
 
+//
+
 /** Sign up by creating the user & mailing otp. */
 const postSignUp = async (req, res, next) => {
 	try {
@@ -159,6 +161,8 @@ const patchUser = async (req, res, next) => {
 		next(error)
 	}
 }
+
+//
 
 module.exports = {
 	postSignUp,

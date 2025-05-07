@@ -2,7 +2,7 @@ const Pin = require('../models/pin.model')
 const MCU = require('../models/mcu.model')
 const { AppError } = require('../utils/app-error.util')
 
-
+//
 
 /** Responds with an array of pins. */
 const getPin = async (req, res, next) => {
@@ -73,7 +73,7 @@ const deletePin = async (req, res, next) => {
     }
 }
 
-
+//
 
 module.exports = {
     getPin,

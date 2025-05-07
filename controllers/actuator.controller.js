@@ -2,7 +2,7 @@ const Actuator = require('../models/actuator.model');
 const MCU = require('../models/mcu.model');
 const { AppError } = require('../utils/app-error.util');
 
-
+//
 
 /** Responds with an array of actuators. */
 const getActuator = async (req, res, next) => {
@@ -30,7 +30,13 @@ const postActuator = async (req, res, next) => {
         const mcuDoc = await MCU.findByPk(mcuId);
         if (!mcuDoc) return next(new AppError(404, "MCU not found."));
 
-        const actuatorDoc = await Actuator.create({ name, label, mcuId });
+        const actuatorDoc = await Actuator.create({
+            name,
+            label,
+            mcuId,
+        }, {
+            source: 'client',
+        });
 
         res.json({
             text: "Actuator created successfully.",
@@ -44,12 +50,18 @@ const postActuator = async (req, res, next) => {
 /** Responds with update success. */
 const patchActuator = async (req, res, next) => {
     try {
-        const { actuatorId, name, label } = req.body;
+        const { actuatorId, name, label, disabled } = req.body;
         
         const actuatorDoc = await Actuator.findByPk(actuatorId)
 		if (!actuatorDoc) return next(new AppError(404, "Actuator not found."))
 
-		await actuatorDoc.update({ name, label })
+        await actuatorDoc.update({
+            name,
+            label,
+            disabled,
+        }, {
+            source: "client",
+        })
 
         res.json({ text: "Actuator updated successfully." });
     } catch (error) {
@@ -65,13 +77,15 @@ const deleteActuator = async (req, res, next) => {
         const actuatorDoc = await Actuator.findByPk(actuatorId)
         if (!actuatorDoc) return next(new AppError(404, "Actuator not found."));
 
-        await actuatorDoc.destroy()
+        await actuatorDoc.destroy({ source: 'client' })
 
         res.json({ text: "Actuator deleted successfully." });
     } catch (error) {
         next(error);
     }
 };
+
+//
 
 module.exports = {
     getActuator,

@@ -5,7 +5,7 @@ const { AppError } = require('../utils/app-error.util')
 const { createToken } = require('../services/token.service')
 const env = require('../configs/env.config')
 
-
+//
 
 /** Responds with an array of mcus. */
 const getMcu = async (req, res, next) => {
@@ -90,7 +90,7 @@ const deleteMcu = async (req, res, next) => {
     }
 }
 
-
+//
 
 module.exports = {
     getMcu,

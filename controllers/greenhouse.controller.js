@@ -3,6 +3,8 @@ const Greenhouse = require("../models/greenhouse.model")
 const { AppError } = require("../utils/app-error.util")
 const env = require("../configs/env.config")
 
+//
+
 /** Responds with an array of greenhouses. */
 const getGreenhouse = async (req, res, next) => {
 	try {
@@ -69,6 +71,8 @@ const deleteGreenhouse = async (req, res, next) => {
 		next(error)
 	}
 }
+
+//
 
 module.exports = {
 	getGreenhouse,

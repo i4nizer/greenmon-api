@@ -2,7 +2,7 @@ const Pin = require('../models/pin.model');
 const Input = require('../models/input.model');
 const { AppError } = require('../utils/app-error.util');
 
-
+//
 
 /** Responds with an array of inputs. */
 const getInput = async (req, res, next) => {
@@ -36,9 +36,19 @@ const postInput = async (req, res, next) => {
         if (!(pinDoc.mode == "Unset" || pinDoc.mode == "Input")) return next(new AppError(400, "Pin is already in use."));
         
         // Update pin mode to "Input"
-        await pinDoc.update({ mode: "Input" });
+        await pinDoc.update({ mode: "Input" }, { source: "client" });
 
-        const inputDoc = await Input.create({ icon, name, type, flag, status, pinId, actuatorId });
+        const inputDoc = await Input.create({
+            icon, 
+            name, 
+            type, 
+            flag, 
+            status, 
+            pinId, 
+            actuatorId,
+        }, {
+            source: "client",
+        });
 
         res.json({
             text: "Input created successfully.",
@@ -67,7 +77,7 @@ const patchInput = async (req, res, next) => {
                 
                 // Check if there are no inputs using the old pin
                 const inputCount = await Input.count({ where: { pinId: inputDoc.pinId } });
-                if (inputCount <= 1) await oldPinDoc.update({ mode: "Unset" });
+                if (inputCount <= 1) await oldPinDoc.update({ mode: "Unset" }, { source: "client" });
             }
         }
 
@@ -77,10 +87,19 @@ const patchInput = async (req, res, next) => {
         if (!(pinDoc.mode == "Unset" || pinDoc.mode == "Input")) return next(new AppError(400, "Pin is already in use."));
 
         // Update pin mode to "Input"
-        await pinDoc.update({ mode: "Input" });
+        await pinDoc.update({ mode: "Input" }, { source: "client" });
 
         // Finally update input
-        await inputDoc.update({ icon, name, type, flag, status, pinId })
+        await inputDoc.update({
+            icon, 
+            name, 
+            type, 
+            flag, 
+            status, 
+            pinId,
+        }, {
+            source: "client",
+        })
 
         res.json({ text: "Input updated successfully." });
     } catch (error) {
@@ -99,7 +118,7 @@ const deleteInput = async (req, res, next) => {
 
         // Update pin mode to "Unset"
         const pinDoc = await Pin.findByPk(inputDoc.pinId);
-        if (pinDoc) await pinDoc.update({ mode: "Unset" });
+        if (pinDoc) await pinDoc.update({ mode: "Unset" }, { source: "client" });
 
         await inputDoc.destroy()
 
@@ -109,7 +128,7 @@ const deleteInput = async (req, res, next) => {
     }
 };
 
-
+//
 
 module.exports = {
     getInput,

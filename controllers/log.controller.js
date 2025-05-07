@@ -1,6 +1,8 @@
 const Log = require("../models/log.model")
 const { AppError } = require("../utils/app-error.util")
 
+//
+
 /** Responds with an array of logs. */
 const getLog = async (req, res, next) => {
 	try {
@@ -24,6 +26,8 @@ const getLog = async (req, res, next) => {
 		next(error)
 	}
 }
+
+//
 
 module.exports = {
 	getLog,

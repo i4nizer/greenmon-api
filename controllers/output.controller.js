@@ -2,7 +2,7 @@ const Pin = require('../models/pin.model')
 const Output = require('../models/output.model')
 const { AppError } = require('../utils/app-error.util')
 
-
+//
 
 /** Responds with an array of outputs. */
 const getOutput = async (req, res, next) => {
@@ -108,7 +108,7 @@ const deleteOutput = async (req, res, next) => {
     }
 }
 
-
+//
 
 module.exports = {
     getOutput,

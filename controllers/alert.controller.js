@@ -1,6 +1,8 @@
 const Alert = require("../models/alert.model")
 const { AppError } = require("../utils/app-error.util")
 
+//
+
 /** Responds with an array of alerts. */
 const getAlert = async (req, res, next) => {
 	try {
@@ -25,6 +27,8 @@ const getAlert = async (req, res, next) => {
 		next(error)
 	}
 }
+
+//
 
 module.exports = {
 	getAlert,

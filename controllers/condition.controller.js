@@ -2,7 +2,7 @@ const Condition = require('../models/condition.model')
 const Threshold = require('../models/threshold.model')
 const { AppError } = require('../utils/app-error.util')
 
-
+//
 
 /** Responds with an array of conditions. */
 const getCondition = async (req, res, next) => {
@@ -30,7 +30,14 @@ const postCondition = async (req, res, next) => {
         const thresholdDoc = await Threshold.findByPk(thresholdId)
         if (!thresholdDoc) return next(new AppError(404, "Threshold not found."))
 
-        const conditionDoc = await Condition.create({ type, value, outputId, thresholdId })
+        const conditionDoc = await Condition.create({
+            type, 
+            value, 
+            outputId, 
+            thresholdId,
+        }, {
+            source: "client",
+        })
 
         res.json({
             text: "Condition created successfully.",
@@ -49,7 +56,13 @@ const patchCondition = async (req, res, next) => {
         const conditionDoc = await Condition.findByPk(conditionId)
 		if (!conditionDoc) return next(new AppError(404, "Condition not found."))
 
-		await conditionDoc.update({ type, value, outputId })
+        await conditionDoc.update({
+            type, 
+            value, 
+            outputId,
+        }, {
+            source: "client",
+        })
 
         res.json({ text: "Condition updated successfully." })
     } catch (error) {
@@ -65,7 +78,7 @@ const deleteCondition = async (req, res, next) => {
         const conditionDoc = await Condition.findByPk(conditionId)
         if (!conditionDoc) return next(new AppError(404, "Condition not found."))
 
-        await conditionDoc.destroy()
+        await conditionDoc.destroy({ source: "client" })
 
         res.json({ text: "Condition deleted successfully." })
     } catch (error) {
@@ -73,7 +86,7 @@ const deleteCondition = async (req, res, next) => {
     }
 }
 
-
+//
 
 module.exports = {
     getCondition,

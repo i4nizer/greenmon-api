@@ -2,7 +2,7 @@ const Schedule = require('../models/schedule.model')
 const Greenhouse = require('../models/greenhouse.model')
 const { AppError } = require('../utils/app-error.util')
 
-
+//
 
 /** Responds with an array of schedules. */
 const getSchedule = async (req, res, next) => {
@@ -30,7 +30,15 @@ const postSchedule = async (req, res, next) => {
         const greenhouseDoc = await Greenhouse.findByPk(greenhouseId)
         if (!greenhouseDoc) return next(new AppError(404, "Greenhouse not found."))
 
-        const scheduleDoc = await Schedule.create({ name, days, times, disabled, greenhouseId })
+        const scheduleDoc = await Schedule.create({
+            name, 
+            days, 
+            times, 
+            disabled, 
+            greenhouseId,
+        }, {
+            source: "client",
+        })
 
         res.json({
             text: "Schedule created successfully.",
@@ -49,7 +57,14 @@ const patchSchedule = async (req, res, next) => {
         const scheduleDoc = await Schedule.findByPk(scheduleId)
 		if (!scheduleDoc) return next(new AppError(404, "Schedule not found."))
 
-		await scheduleDoc.update({ name, days, times, disabled })
+        await scheduleDoc.update({
+            name, 
+            days, 
+            times, 
+            disabled,
+        }, {
+            source: "client",
+        })
         
         res.json({ text: "Schedule updated successfully." })
     } catch (error) {
@@ -65,7 +80,7 @@ const deleteSchedule = async (req, res, next) => {
         const scheduleDoc = await Schedule.findByPk(scheduleId)
         if (!scheduleDoc) return next(new AppError(404, "Schedule not found."))
 
-        await scheduleDoc.destroy()
+        await scheduleDoc.destroy({ source: "client" })
         
         res.json({ text: "Schedule deleted successfully." })
     } catch (error) {
@@ -73,7 +88,7 @@ const deleteSchedule = async (req, res, next) => {
     }
 }
 
-
+//
 
 module.exports = {
     getSchedule,
