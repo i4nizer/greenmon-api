@@ -1,3 +1,4 @@
+const { logger } = require("../../utils/logger.util");
 
 
 
@@ -39,8 +40,12 @@ const checkWsClient = (userId) => _wsClientMap.has(userId)
  * @param {'Create'|'Retrieve'|'Update'|'Delete'} query Tells what type of request, CRUD.
  */
 const sendWsClient = (ws, event, data, query = 'Update') => {
-    if (ws.readyState != ws.OPEN || (data?.length <= 0 && query != 'Retrieve')) return;
+    if (ws.readyState != ws.OPEN || (data?.length <= 0 && query != 'Retrieve')) {
+        logger.warn(`Web socket failed sending ${event} event to client.`)
+        return;
+    }
     ws.send(JSON.stringify({ event, data, query }))
+    logger.info(`Web socket sent ${event} event to client with ${query} and data[] of length ${data?.length}.`)
 }
 
 

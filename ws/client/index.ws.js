@@ -20,13 +20,6 @@ const onWsClientClose = (userId) => {
 const onWsClientAuth = async (ws, userId) => {
 	logger.info("Web socket client successfully authenticated.")
 
-	// override ws.send() for logging
-	const send = ws.send
-	ws.send = (data, options, callback) => {
-		logger.info(`Web socket client sent: ${data}.`)
-		send.call(ws, data, options, callback)
-	}
-
 	ws.on("close", () => onWsClientClose(userId))
 	ws.on("message", (msg) => console.log(msg))
 		
