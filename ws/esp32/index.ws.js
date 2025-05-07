@@ -1,9 +1,11 @@
+const env = require("../../configs/env.config");
 const { logger } = require("../../utils/logger.util");
-const { verifyToken, revokeToken } = require('../../services/token.service')
+const { verifyToken, createToken, revokeToken } = require('../../services/token.service')
 const { delWsEsp32, addWsEsp32, formatWsEsp32Data } = require("./util.ws");
 const { attachWsEsp32Hooks } = require("./hook.ws");
 const { sendWsEsp32InitialData } = require("./init.ws");
 const { executeEsp32Handler } = require("./handler.ws");
+const { Greenhouse } = require("../../models/index.model");
 
 
 
@@ -14,8 +16,9 @@ const { executeEsp32Handler } = require("./handler.ws");
  * @param {String} msg Usually a json string.
  */
 const onWsEsp32Msg = (ws, msg) => {
-	logger.info(`Web socket received: ${msg}.`)
 	const { event, data = [], query } = JSON.parse(msg)
+	logger.info(`Web socket received ${event} event from esp32 with ${query} and data[]of length ${data?.length}.`)
+	// logger.info(`Web socket received ${event} event from esp32 with ${query} and data[${JSON.stringify(data)}].`)// of length ${data?.length}.`)
 	
 	executeEsp32Handler(ws, event, data, query)
 }
@@ -24,23 +27,16 @@ const onWsEsp32Msg = (ws, msg) => {
  * Removes the web socket client from map.
  */
 const onWsEsp32Close = (apiKey) => {
-	logger.info("Web socket client disconnected.")
+	logger.info("Web socket esp32 client disconnected.")
 	if (delWsEsp32(apiKey)) return;
-	logger.warn("Web socket anomaly, no web socket client found upon disconnection.")
+	logger.warn("Web socket esp32 anomaly, no web socket client found upon disconnection.")
 }
 
 /**
  * Handles authenticating web socket client.
  */
 const onWsEsp32Auth = async (ws, apiKey, payload) => {
-	logger.info("Web socket client successfully authenticated.")
-
-	// override ws.send() for logging
-	const send = ws.send
-	ws.send = (data, options, callback) => {
-		logger.info(`Web socket sent: ${data}.`)
-		send.call(ws, data, options, callback)
-	}
+	logger.info("Web socket esp32 client successfully authenticated.")
 
 	ws.on("message", (msg) => onWsEsp32Msg(ws, msg))
 	ws.on("close", () => onWsEsp32Close(apiKey))
@@ -50,7 +46,9 @@ const onWsEsp32Auth = async (ws, apiKey, payload) => {
 	
 	// send all initial data
 	await sendWsEsp32InitialData(ws, payload)
-		.catch(error => logger.error("Web socket error occurred while sending initial data.", error))
+	
+	// send init success
+	ws.send(formatWsEsp32Data("init", [], "Create"))	// marks esp32 ready
 	
 	// add after sending initial data to avoid update while initializing
 	addWsEsp32(apiKey, ws)
@@ -70,11 +68,14 @@ const onWsEsp32TokenExpired = async (ws, apiKey, error) => {
 		// create new token
 		const { tokenStr: token } = await createToken(userId, { greenhouseId }, "Api", env.apiLife)
 
+		// also save token as the greenhouse key
+		await Greenhouse.update({ key: token }, { where: { id: greenhouseId } })
+
 		// send error and token
 		ws.send(formatWsEsp32Data("error", [error, { token }], 'Create'))
 		ws.close()
 		
-		logger.info("Web socket successfully re-auth client.")
+		logger.info("Web socket esp32 successfully re-auth client.")
 		return true
 
 	} catch (error) {
@@ -83,7 +84,7 @@ const onWsEsp32TokenExpired = async (ws, apiKey, error) => {
 		ws.send(formatWsEsp32Data("error", [error], 'Create'))
 		ws.close()
 		
-		logger.error("Web socket auth error occurred.", error)
+		logger.error("Web socket esp32 auth error occurred.", error)
 		return false
 	}
 }
@@ -94,7 +95,8 @@ const onWsEsp32TokenExpired = async (ws, apiKey, error) => {
 const onWsEsp32Connect = async (ws, req) => {
 	// get api key
 	const apiKey = req.headers["x-api-key"];
-	logger.info("Web socket client connected.");
+	if (!apiKey) return ws.close(1008, "No api key provided.");
+	logger.info("Web socket esp32 client connected.");
 
 	try {
 		// check api key
@@ -112,7 +114,7 @@ const onWsEsp32Connect = async (ws, req) => {
 		ws.send(formatWsEsp32Data("error", [error], 'Create'))
 		ws.close()
 		
-		logger.error("Web socket auth error occurred.", error)
+		logger.error("Web socket esp32 auth error occurred.", error)
 		return
 	} 
 }
