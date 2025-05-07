@@ -8,13 +8,15 @@ const { Greenhouse, Threshold } = require('../../../models/index.model')
  * Sends created action to esp32.
  */
 const onAfterActionCreate = async (action, options) => {
-    try {
+	try {
+		if (options.source === 'esp32') return; // Ignore esp32 source
+
         const threshold = await Threshold.findByPk(action.thresholdId)
 		const greenhouse = await Greenhouse.findByPk(threshold.greenhouseId)
 		const ws = getWsEsp32(greenhouse.key)
 		
 		if (!ws) return;
-		sendWsEsp32(ws, 'action', action, 'Create')
+		sendWsEsp32(ws, 'action', [action], 'Create')
 
 	} catch (error) {
 		logger.error(error.message, error)
@@ -26,12 +28,14 @@ const onAfterActionCreate = async (action, options) => {
  */
 const onAfterActionUpdate = async (action, options) => {
 	try {
+		if (options.source === 'esp32') return; // Ignore esp32 source
+
 		const threshold = await Threshold.findByPk(action.thresholdId)
 		const greenhouse = await Greenhouse.findByPk(threshold.greenhouseId)
 		const ws = getWsEsp32(greenhouse.key)
 		
 		if (!ws) return;
-		sendWsEsp32(ws, 'action', action, 'Update')
+		sendWsEsp32(ws, 'action', [action], 'Update')
 
 	} catch (error) {
 		logger.error(error.message, error)
@@ -43,13 +47,15 @@ const onAfterActionUpdate = async (action, options) => {
  */
 const onBeforeActionDelete = async (action, options) => {
 	try {
+		if (options.source === 'esp32') return; // Ignore esp32 source
+		
 		const threshold = await Threshold.findByPk(action.thresholdId)
 		const greenhouse = await Greenhouse.findByPk(threshold.greenhouseId)
 		const ws = getWsEsp32(greenhouse.key)
 		if (!ws) return;
 
 		// delete action
-		sendWsEsp32(ws, 'action', action, 'Delete')
+		sendWsEsp32(ws, 'action', [action], 'Delete')
 
 	} catch (error) {
 		logger.error(error.message, error)
