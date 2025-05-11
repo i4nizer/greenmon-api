@@ -1,4 +1,5 @@
-const { MCU, Pin, Sensor, Output, Actuator, Input, Schedule, Threshold, Condition, Action, } = require("../../models/index.model")
+const { MCU, Pin, Sensor, Output, Actuator, Input, Schedule, Threshold, Condition, Action, Hook } = require("../../models/index.model")
+const { onAfterHookCreate, onAfterHookUpdate, onBeforeHookDelete } = require("./hooks/hook.hook")
 const { onAfterActionCreate, onAfterActionUpdate, onBeforeActionDelete } = require("./hooks/action.hook")
 const { onAfterActuatorCreate, onAfterActuatorUpdate, onBeforeActuatorDelete } = require("./hooks/actuator.hook")
 const { onAfterConditionCreate, onAfterConditionUpdate, onBeforeConditionDelete } = require("./hooks/condition.hook")
@@ -10,7 +11,7 @@ const { onAfterScheduleCreate, onAfterScheduleUpdate, onBeforeScheduleDelete } =
 const { onAfterSensorCreate, onAfterSensorUpdate, onBeforeSensorDelete } = require("./hooks/sensor.hook")
 const { onAfterThresholdCreate, onAfterThresholdUpdate, onBeforeThresholdDelete } = require("./hooks/threshold.hook")
 
-
+//
 
 /**
  * Attaches hooks after the call so that it would be available upon express bind.
@@ -32,6 +33,11 @@ const attachWsEsp32Hooks = () => {
 	Condition.afterCreate(onAfterConditionCreate)
 	Condition.afterUpdate(onAfterConditionUpdate)
 	Condition.beforeDestroy(onBeforeConditionDelete)
+
+	// Attach hook hooks
+	Hook.afterCreate(onAfterHookCreate)
+	Hook.afterUpdate(onAfterHookUpdate)
+	Hook.beforeDestroy(onBeforeHookDelete)
 	
 	// Attach input hooks
 	Input.afterCreate(onAfterInputCreate)
@@ -70,6 +76,6 @@ const attachWsEsp32Hooks = () => {
 	Threshold.beforeDestroy(onBeforeThresholdDelete)
 }
 
-
+//
 
 module.exports = { attachWsEsp32Hooks }

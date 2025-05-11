@@ -10,6 +10,7 @@ const { onAfterScheduleUpdate } = require('./hooks/schedule.hook')
 const { onAfterSensorUpdate } = require('./hooks/sensor.hook')
 const { onAfterThresholdUpdate } = require('./hooks/threshold.hook')
 
+//
 
 /**
  * Attaches hooks after the call so that it would be available upon express bind.
@@ -48,6 +49,6 @@ const attachWsClientHooks = () => {
     Threshold.afterUpdate(onAfterThresholdUpdate)
 }
 
-
+//
 
 module.exports = { attachWsClientHooks }

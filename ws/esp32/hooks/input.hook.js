@@ -1,6 +1,8 @@
 const { logger } = require("../../../utils/logger.util")
-const { sendWsEsp32, getWsEsp32 } = require("../util.ws")
+const { sendWsEsp32 } = require("../util.ws")
 const { Greenhouse, MCU, Actuator, Action } = require("../../../models/index.model")
+
+//
 
 /**
  * Sends created input to esp32.
@@ -12,10 +14,8 @@ const onAfterInputCreate = async (input, options) => {
 		const actuator = await Actuator.findByPk(input.actuatorId)
 		const mcu = await MCU.findByPk(actuator.mcuId)
 		const greenhouse = await Greenhouse.findByPk(mcu.greenhouseId)
-		const ws = getWsEsp32(greenhouse.key)
+		sendWsEsp32(greenhouse.key, "input", [input], "Create")
 
-		if (!ws) return
-		sendWsEsp32(ws, "input", [input], "Create")
 	} catch (error) {
 		logger.error(error.message, error)
 	}
@@ -31,10 +31,8 @@ const onAfterInputUpdate = async (input, options) => {
 		const actuator = await Actuator.findByPk(input.actuatorId)
 		const mcu = await MCU.findByPk(actuator.mcuId)
 		const greenhouse = await Greenhouse.findByPk(mcu.greenhouseId)
-		const ws = getWsEsp32(greenhouse.key)
+		sendWsEsp32(greenhouse.key, "input", [input], "Update")
 
-		if (!ws) return
-		sendWsEsp32(ws, "input", [input], "Update")
 	} catch (error) {
 		logger.error(error.message, error)
 	}
@@ -50,18 +48,19 @@ const onBeforeInputDelete = async (input, options) => {
 		const actuator = await Actuator.findByPk(input.actuatorId)
 		const mcu = await MCU.findByPk(actuator.mcuId)
 		const greenhouse = await Greenhouse.findByPk(mcu.greenhouseId)
-		const ws = getWsEsp32(greenhouse.key)
-		if (!ws) return
 
 		// delete input
-		sendWsEsp32(ws, "input", [input], "Delete")
+		sendWsEsp32(greenhouse.key, "input", [input], "Delete")
 
 		// delete input actions
-		sendWsEsp32(ws, "action", [{ inputId: input.id }], "Delete")
+		sendWsEsp32(greenhouse.key, "action", [{ inputId: input.id }], "Delete")
+
 	} catch (error) {
 		logger.error(error.message, error)
 	}
 }
+
+//
 
 module.exports = {
 	onAfterInputCreate,

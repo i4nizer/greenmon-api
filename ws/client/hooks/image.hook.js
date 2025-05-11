@@ -1,6 +1,8 @@
 const { logger } = require("../../../utils/logger.util")
-const { sendWsClient, getWsClient } = require("../util.ws")
+const { sendWsClient } = require("../util.ws")
 const { Output, Sensor, MCU, Greenhouse } = require("../../../models/index.model")
+
+//
 
 /**
  * Sends created image to client.
@@ -13,14 +15,14 @@ const onAfterImageCreate = async (image, options) => {
 		const sensor = await Sensor.findByPk(output.sensorId, { attributes: ["mcuId"] })
 		const mcu = await MCU.findByPk(sensor.mcuId, { attributes: ["greenhouseId"] })
 		const greenhouse = await Greenhouse.findByPk(mcu.greenhouseId, { attributes: ["userId"] })
+		sendWsClient(greenhouse.userId, "image", [image], "Create")
 
-		const ws = getWsClient(greenhouse.userId)
-		if (!ws) return
-		sendWsClient(ws, "image", [image], "Create")
 	} catch (error) {
 		logger.error(error.message, error)
 	}
 }
+
+//
 
 module.exports = {
 	onAfterImageCreate,

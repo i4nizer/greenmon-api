@@ -1,5 +1,7 @@
 const { logger } = require("../../../utils/logger.util")
-const { sendWsClient, getWsClient } = require("../util.ws")
+const { sendWsClient } = require("../util.ws")
+
+//
 
 /**
  * Sends created alert to client.
@@ -7,14 +9,15 @@ const { sendWsClient, getWsClient } = require("../util.ws")
 const onAfterAlertCreate = async (alert, options) => {
 	try {
 		if (options.source == "client") return // Ignore client source
+		
+		sendWsClient(alert.userId, "alert", [alert], "Create")
 
-		const ws = getWsClient(alert.userId)
-		if (!ws) return
-		sendWsClient(ws, "alert", [alert], "Create")
 	} catch (error) {
 		logger.error(error.message, error)
 	}
 }
+
+//
 
 module.exports = {
 	onAfterAlertCreate,

@@ -1,6 +1,8 @@
 const { logger } = require("../../../utils/logger.util")
-const { sendWsClient, getWsClient } = require("../util.ws")
+const { sendWsClient } = require("../util.ws")
 const { Greenhouse } = require("../../../models/index.model")
+
+//
 
 /**
  * Sends updates to client.
@@ -10,14 +12,14 @@ const onAfterScheduleUpdate = async (schedule, options) => {
 		if (options.source == "client") return // Ignore client source
 
 		const greenhouse = await Greenhouse.findByPk(schedule.greenhouseId, { attributes: ["userId"] })
-		const ws = getWsClient(greenhouse.userId)
+		sendWsClient(greenhouse.userId, "schedule", [schedule], "Update")
 
-		if (!ws) return
-		sendWsClient(ws, "schedule", [schedule], "Update")
 	} catch (error) {
 		logger.error(error.message, error)
 	}
 }
+
+//
 
 module.exports = {
 	onAfterScheduleUpdate,

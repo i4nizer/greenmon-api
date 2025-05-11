@@ -1,6 +1,8 @@
 const { logger } = require("../../../utils/logger.util")
-const { sendWsEsp32, getWsEsp32 } = require("../util.ws")
+const { sendWsEsp32 } = require("../util.ws")
 const { Greenhouse, MCU, Output, Input, Condition } = require("../../../models/index.model")
+
+//
 
 const onAfterPinBulkCreate = async (pins, options) => {
 	try {
@@ -8,10 +10,8 @@ const onAfterPinBulkCreate = async (pins, options) => {
 
 		const mcu = await MCU.findByPk(pins?.at(0)?.mcuId)
 		const greenhouse = await Greenhouse.findByPk(mcu.greenhouseId)
-		const ws = getWsEsp32(greenhouse.key)
+		sendWsEsp32(greenhouse.key, "pin", [pins], "Create")
 
-		if (!ws) return
-		sendWsEsp32(ws, "pin", [pins], "Create")
 	} catch (error) {
 		logger.error(error.message, error)
 	}
@@ -26,10 +26,8 @@ const onAfterPinCreate = async (pin, options) => {
 
 		const mcu = await MCU.findByPk(pin.mcuId)
 		const greenhouse = await Greenhouse.findByPk(mcu.greenhouseId)
-		const ws = getWsEsp32(greenhouse.key)
+		sendWsEsp32(greenhouse.key, "pin", [pin], "Create")
 
-		if (!ws) return
-		sendWsEsp32(ws, "pin", [pin], "Create")
 	} catch (error) {
 		logger.error(error.message, error)
 	}
@@ -44,10 +42,8 @@ const onAfterPinUpdate = async (pin, options) => {
 
 		const mcu = await MCU.findByPk(pin.mcuId)
 		const greenhouse = await Greenhouse.findByPk(mcu.greenhouseId)
-		const ws = getWsEsp32(greenhouse.key)
+		sendWsEsp32(greenhouse.key, "pin", [pin], "Update")
 
-		if (!ws) return
-		sendWsEsp32(ws, "pin", [pin], "Update")
 	} catch (error) {
 		logger.error(error.message, error)
 	}
@@ -62,20 +58,18 @@ const onBeforePinDelete = async (pin, options) => {
 
 		const mcu = await MCU.findByPk(pin.mcuId)
 		const greenhouse = await Greenhouse.findByPk(mcu.greenhouseId)
-		const ws = getWsEsp32(greenhouse.key)
-		if (!ws) return
-
+		
 		// delete pin
-		sendWsEsp32(ws, "pin", [pin], "Delete")
+		sendWsEsp32(greenhouse.key, "pin", [pin], "Delete")
 
 		// delete pin inputs
 		const inputs = await Input.findAll({ where: { pinId: pin.id } })
-		sendWsEsp32(ws, "input", [{ pinId: pin.id }], "Delete")
+		sendWsEsp32(greenhouse.key, "input", [{ pinId: pin.id }], "Delete")
 
 		// delete pin inputs actions
 		const actions = await Input.findAll({ where: { inputId: inputs.map((i) => i.id) } })
 		sendWsEsp32(
-			ws,
+			greenhouse.key,
 			"action",
 			inputs.map((i) => ({ inputId: i.id })),
 			"Delete"
@@ -83,11 +77,11 @@ const onBeforePinDelete = async (pin, options) => {
 
 		// delete pin outputs
 		const outputs = await Output.findAll({ where: { pinId: pin.id } })
-		sendWsEsp32(ws, "output", [{ pinId: pin.id }], "Delete")
+		sendWsEsp32(greenhouse.key, "output", [{ pinId: pin.id }], "Delete")
 
 		// delete pin outputs conditions
 		sendWsEsp32(
-			ws,
+			greenhouse.key,
 			"condition",
 			outputs.map((o) => ({ outputId: o.id })),
 			"Delete"
@@ -96,6 +90,8 @@ const onBeforePinDelete = async (pin, options) => {
 		logger.error(error.message, error)
 	}
 }
+
+//
 
 module.exports = {
 	onAfterPinBulkCreate,

@@ -1,6 +1,8 @@
 const { logger } = require("../../../utils/logger.util")
-const { sendWsEsp32, getWsEsp32 } = require("../util.ws")
+const { sendWsEsp32 } = require("../util.ws")
 const { Greenhouse, Pin, Sensor, Output, Actuator, Input, Condition, Action } = require("../../../models/index.model")
+
+//
 
 /**
  * Sends created mcu to esp32.
@@ -10,10 +12,8 @@ const onAfterMcuCreate = async (mcu, options) => {
 		if (options.source == "esp32") return // Ignore esp32 source
 
 		const greenhouse = await Greenhouse.findByPk(mcu.greenhouseId)
-		const ws = getWsEsp32(greenhouse.key)
+		sendWsEsp32(greenhouse.key, "mcu", [mcu], "Create")
 
-		if (!ws) return
-		sendWsEsp32(ws, "mcu", [mcu], "Create")
 	} catch (error) {
 		logger.error(error.message, error)
 	}
@@ -27,10 +27,8 @@ const onAfterMcuUpdate = async (mcu, options) => {
 		if (options.source == "esp32") return // Ignore esp32 source
 
 		const greenhouse = await Greenhouse.findByPk(mcu.greenhouseId)
-		const ws = getWsEsp32(greenhouse.key)
+		sendWsEsp32(greenhouse.key, "mcu", [mcu], "Update")
 
-		if (!ws) return
-		sendWsEsp32(ws, "mcu", [mcu], "Update")
 	} catch (error) {
 		logger.error(error.message, error)
 	}
@@ -44,23 +42,21 @@ const onBeforeMcuDelete = async (mcu, options) => {
 		if (options.source == "esp32") return // Ignore esp32 source
 
 		const greenhouse = await Greenhouse.findByPk(mcu.greenhouseId)
-		const ws = getWsEsp32(greenhouse.key)
-		if (!ws) return
-
+		
 		// delete mcu
-		sendWsEsp32(ws, "mcu", [mcu], "Delete")
+		sendWsEsp32(greenhouse.key, "mcu", [mcu], "Delete")
 
 		// delete mcu pins
-		sendWsEsp32(ws, "pin", [{ mcuId: mcu.id }], "Delete")
+		sendWsEsp32(greenhouse.key, "pin", [{ mcuId: mcu.id }], "Delete")
 
 		// delete mcu sensors
 		const sensors = await Sensor.findAll({ where: { mcuId: mcu.id } })
-		sendWsEsp32(ws, "sensor", [{ mcuId: mcu.id }], "Delete")
+		sendWsEsp32(greenhouse.key, "sensor", [{ mcuId: mcu.id }], "Delete")
 
 		// delete mcu sensors outputs
 		const outputs = await Output.findAll({ where: { sensorId: sensors.map((s) => s.id) } })
 		sendWsEsp32(
-			ws,
+			greenhouse.key,
 			"output",
 			sensors.map((s) => ({ sensorId: s.id })),
 			"Delete"
@@ -68,7 +64,7 @@ const onBeforeMcuDelete = async (mcu, options) => {
 
 		// delete mcu sensors outputs conditions
 		sendWsEsp32(
-			ws,
+			greenhouse.key,
 			"condition",
 			outputs.map((o) => ({ outputId: o.id })),
 			"Delete"
@@ -76,12 +72,12 @@ const onBeforeMcuDelete = async (mcu, options) => {
 
 		// delete mcu actuators
 		const actuators = await Actuator.findAll({ where: { mcuId: mcu.id } })
-		sendWsEsp32(ws, "actuator", [{ mcuId: mcu.id }], "Delete")
+		sendWsEsp32(greenhouse.key, "actuator", [{ mcuId: mcu.id }], "Delete")
 
 		// delete mcu actuators inputs
 		const inputs = await Input.findAll({ where: { actuatorId: actuators.map((a) => a.id) } })
 		sendWsEsp32(
-			ws,
+			greenhouse.key,
 			"input",
 			actuators.map((a) => ({ actuatorId: a.id })),
 			"Delete"
@@ -89,7 +85,7 @@ const onBeforeMcuDelete = async (mcu, options) => {
 
 		// delete mcu actuator inputs actions
 		sendWsEsp32(
-			ws,
+			greenhouse.key,
 			"action",
 			inputs.map((i) => ({ inputId: i.id })),
 			"Delete"
@@ -98,6 +94,8 @@ const onBeforeMcuDelete = async (mcu, options) => {
 		logger.error(error.message, error)
 	}
 }
+
+//
 
 module.exports = {
 	onAfterMcuCreate,

@@ -2,6 +2,8 @@ const { logger } = require("../../../utils/logger.util")
 const { sendWsClient, getWsClient } = require("../util.ws")
 const { Greenhouse } = require("../../../models/index.model")
 
+//
+
 /**
  * Sends updates to client.
  */
@@ -10,14 +12,14 @@ const onAfterThresholdUpdate = async (threshold, options) => {
 		if (options.source == "client") return // Ignore client source
 
 		const greenhouse = await Greenhouse.findByPk(threshold.greenhouseId, { attributes: ["userId"] })
-		const ws = getWsClient(greenhouse.userId)
+		sendWsClient(greenhouse.userId, "threshold", [threshold], "Update")
 
-		if (!ws) return
-		sendWsClient(ws, "threshold", [threshold], "Update")
 	} catch (error) {
 		logger.error(error.message, error)
 	}
 }
+
+//
 
 module.exports = {
 	onAfterThresholdUpdate,

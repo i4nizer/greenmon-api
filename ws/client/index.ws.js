@@ -1,30 +1,35 @@
 const { verifyToken } = require("../../services/token.service");
 const { logger } = require("../../utils/logger.util");
 const { addWsClient, delWsClient } = require("./util.ws");
-const { attachWsClientHooks } = require('./hook.ws')
+const { attachWsClientHooks } = require('./hook.ws');
+const { WebSocketClient } = require("../wsclient.ws");
 
-
+//
 
 /**
  * Removes the web socket client from map.
+ * 
+ * @param {WebSocketClient} wsClient
  */
-const onWsClientClose = (userId) => {
+const onWsClientClose = (wsClient) => {
 	logger.info("Web socket client disconnected.")
-	if (delWsClient(userId)) return;
-	logger.warn("Web socket anomaly, no web socket client found upon disconnection.")
+	delWsClient(wsClient)
 }
 
 /**
  * Handles authenticating web socket client.
+ * 
+ * @param {WebSocketClient} wsClient
  */
-const onWsClientAuth = async (ws, userId) => {
+const onWsClientAuth = async (wsClient) => {
 	logger.info("Web socket client successfully authenticated.")
 
-	ws.on("close", () => onWsClientClose(userId))
-	ws.on("message", (msg) => console.log(msg))
+	wsClient.ws.on("close", () => onWsClientClose(wsClient))
+	wsClient.ws.on("message", (msg) => console.log(msg))
 		
 	// add after sending initial data to avoid update while initializing
-	addWsClient(userId, ws)
+    wsClient.init = true
+    addWsClient(wsClient)
 }
 
 /**
@@ -36,19 +41,24 @@ const onWsClientConnect = async (ws, req) => {
 	const accessToken = req.query.token
     if (!accessToken) return ws.close(1008, "No access token provided.");
 
+    const wsClient = new WebSocketClient(ws, null, null, false)
+
     try {
         // check access token
         const { payload } = await verifyToken(accessToken, 'Access')
-        await onWsClientAuth(ws, payload.userId)
+        wsClient.key = payload.userId
+        wsClient.payload = payload
+        await onWsClientAuth(wsClient)
 
     } catch (error) {
+
         // not expected
         ws.close(1008, "Invalid token provided.")
         logger.error("WebSocket client connection failed: ", error)
     }
 }
 
-
+//
 
 module.exports = {
     onWsClientConnect,
