@@ -7,7 +7,7 @@ const { AppError } = require('./app-error.util')
 /**
  * The directory of all uploaded images from api.
  */
-const _uploadDir = path.join(__dirname, "../uploads")
+const _uploadDir = path.join(__dirname, "../images/uploads")
 
 /**
  * Defines where and how the files will be stored.
