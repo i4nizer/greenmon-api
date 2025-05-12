@@ -22,7 +22,7 @@ const thresholdRoutes = require("./threshold.route")
 const logRoutes = require("./log.route")
 const alertRoutes = require("./alert.route")
 
-    
+//    
 
 router.route("/")
     .get(getGreenhouse)
@@ -37,6 +37,6 @@ router.use("/threshold", thresholdRoutes)
 router.use("/log", logRoutes)
 router.use("/alert", alertRoutes)
 
-
+//
 
 module.exports = router

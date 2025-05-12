@@ -7,13 +7,11 @@ const { checkJoi } = require("../middlewares/joi.middleware")
 
 const { getReading, getReadingCsv } = require("../controllers/reading.controller")
 
+//
 
+router.route("/").get(checkJoi(getReadingSchema, "query"), getReading)
+router.route("/csv").get(checkJoi(getReadingSchema, "query"), getReadingCsv)
 
-router.route("/")
-    .get(checkJoi(getReadingSchema, "Query"), getReading)
-router.route("/csv")
-    .get(checkJoi(getReadingSchema, "Query"), getReadingCsv)
-
-
+//
 
 module.exports = router

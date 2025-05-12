@@ -1,24 +1,30 @@
-const express = require('express');
-const router = express.Router();
+const express = require("express")
+const router = express.Router()
 
-const { postActuatorSchema, patchActuatorSchema, deleteActuatorSchema, getActuatorSchema } = require('../validations/actuator.validation');
+const {
+	postActuatorSchema,
+	patchActuatorSchema,
+	deleteActuatorSchema,
+	getActuatorSchema,
+} = require("../validations/actuator.validation")
 
-const { checkJoi } = require('../middlewares/joi.middleware');
+const { checkJoi } = require("../middlewares/joi.middleware")
 
-const { getActuator, postActuator, patchActuator, deleteActuator } = require('../controllers/actuator.controller');
+const { getActuator, postActuator, patchActuator, deleteActuator } = require("../controllers/actuator.controller")
 
-const inputRoutes = require('./input.route')
+const inputRoutes = require("./input.route")
 
+//
 
+router
+	.route("/")
+	.get(checkJoi(getActuatorSchema, "query"), getActuator)
+	.post(checkJoi(postActuatorSchema), postActuator)
+	.patch(checkJoi(patchActuatorSchema), patchActuator)
+	.delete(checkJoi(deleteActuatorSchema, "query"), deleteActuator)
 
-router.route('/')
-    .get(checkJoi(getActuatorSchema, "Query"), getActuator)
-    .post(checkJoi(postActuatorSchema), postActuator)
-    .patch(checkJoi(patchActuatorSchema), patchActuator)
-    .delete(checkJoi(deleteActuatorSchema, "Query"), deleteActuator);
+router.use("/input", inputRoutes)
 
-router.use('/input', inputRoutes)
+//
 
-
-
-module.exports = router;
+module.exports = router

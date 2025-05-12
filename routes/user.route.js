@@ -14,7 +14,7 @@ const {
 } = require("../validations/user.validation")
 
 const { checkJoi } = require("../middlewares/joi.middleware")
-const { checkAccessToken, checkRefreshToken } = require("../middlewares/token.middleware")
+const { checkAccessToken, checkRefreshToken, checkApiKey } = require("../middlewares/token.middleware")
 
 const {
 	postSignUp,
@@ -29,7 +29,10 @@ const {
 	postResetPasswordOTP,
 } = require("../controllers/user.controller")
 
+const esp32Routes = require("./esp32.route")
 const greenhouseRoutes = require("./greenhouse.route")
+
+//
 
 router.patch("/", checkJoi(updateUserSchema), checkAccessToken, patchUser)
 
@@ -47,6 +50,9 @@ router.post("/reset-password-otp", checkJoi(resetPasswordOTPSchema), postResetPa
 router.post("/reset-password", checkJoi(resetPasswordSchema), postResetPassword)
 
 router.use("/model", checkAccessToken, express.static(path.join(__dirname, "../ai")))
+router.use("/esp32", checkApiKey, esp32Routes)
 router.use("/greenhouse", checkAccessToken, greenhouseRoutes)
+
+//
 
 module.exports = router

@@ -7,11 +7,12 @@ const { checkJoi } = require("../middlewares/joi.middleware")
 
 const { getLog } = require("../controllers/log.controller")
 
+//
 
+router
+    .route("/")
+    .get(checkJoi(getLogSchema, "query"), getLog)
 
-router.route("/")
-    .get(checkJoi(getLogSchema, "Query"), getLog)
-
-
+//
 
 module.exports = router
