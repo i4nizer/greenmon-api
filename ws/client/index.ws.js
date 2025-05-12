@@ -25,11 +25,19 @@ const onWsClientAuth = async (wsClient) => {
 	logger.info("Web socket client successfully authenticated.")
 
 	wsClient.ws.on("close", () => onWsClientClose(wsClient))
-	wsClient.ws.on("message", (msg) => console.log(msg))
-		
+	// wsClient.ws.on("message", (msg) => console.log(msg)) // not bidirectional
+
+	// modify for logging
+	const send = wsClient.ws.send.bind(wsClient.ws)
+	wsClient.ws.send = (msg) => {
+		const { event, data, query } = JSON.parse(msg)
+		logger.info(`Web socket sent ${event} event to client with ${query} and data[] of length ${data?.length}.`)
+		return send(msg)
+	}
+
 	// add after sending initial data to avoid update while initializing
-    wsClient.init = true
-    addWsClient(wsClient)
+	wsClient.init = true
+	addWsClient(wsClient)
 }
 
 /**

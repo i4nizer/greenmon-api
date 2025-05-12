@@ -19,8 +19,8 @@ const { WebSocketClient } = require("../wsclient.ws");
 const onWsEsp32Msg = (wsClient, msg) => {
 	try {
 		const { event, data = [], query } = JSON.parse(msg)
-		// logger.info(`Web socket received ${event} event from esp32 with ${query} and data[]of length ${data?.length}.`)
-		logger.info(`Web socket received ${event} event from esp32 with ${query} and data[${JSON.stringify(data)}].`)// of length ${data?.length}.`)
+		logger.info(`Web socket received ${event} event from esp32 with ${query} and data[] of length ${data?.length}.`)
+		// logger.info(`Web socket received ${event} event from esp32 with ${query} and data[${JSON.stringify(data)}].`)// of length ${data?.length}.`)
 		
 		executeEsp32Handler(wsClient, event, data, query)
 	} catch (error) {
@@ -46,6 +46,14 @@ const onWsEsp32Auth = async (wsClient) => {
 
 	wsClient.ws.on("message", (msg) => onWsEsp32Msg(wsClient, msg))
 	wsClient.ws.on("close", () => onWsEsp32Close(wsClient))
+
+	// modify for logging
+	const send = wsClient.ws.send
+	wsClient.ws.send = (msg) => {
+		const { event, data, query } = JSON.parse(msg)
+		logger.info(`Web socket sent ${event} event to esp32 with ${query} and data[] of length ${data?.length}.`)
+		return send.call(wsClient.ws, msg)
+	}
 	
 	// send successful authentication
 	wsClient.send("auth", [], "Create", true)	// cleans all files

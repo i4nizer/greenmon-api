@@ -24,28 +24,29 @@ class WebSocketClient {
     send(event, data, query = 'Update', force = false) {
         if (!force && !this.init) return -2
         else if (this.ws.readyState != this.ws.OPEN) return -1
-        else if (data?.length <= 0 && query != 'Retrieve') return 0
 
         this.ws.send(JSON.stringify({ event, data, query }))
         return data?.length || 0
     }
 
-    sendChunked(event, data, query, size = 10, delay = 30, force = false) {
+    sendChunked(event, data, query, size = 10, delay = 50, force = false) {
         if (!force && !this.init) return
-        const firstData = data.splice(0, size)
+        const copy = [...data]
+        const firstData = copy.splice(0, size)
         this.send(event, firstData, query)
         
         const interval = setInterval(() => {
-            if (data.length <= 0) return clearInterval(interval)
-            this.send(event, data.splice(0, size), query)
+            if (copy.length <= 0) return clearInterval(interval)
+            this.send(event, copy.splice(0, size), query)
         }, delay)
     }
     
-    async sendChunkedAsync(event, data, query, size = 10, delay = 30, force = false) {
+    async sendChunkedAsync(event, data, query, size = 10, delay = 50, force = false) {
         if (!force && !this.init) return
+        const copy = [...data]
         
-        while (data.length > 0) {
-            this.send(event, data.splice(0, size), query, force)
+        while (copy.length > 0) {
+            this.send(event, copy.splice(0, size), query, force)
             await new Promise(res => setTimeout(() => res(), delay))
         }
     }

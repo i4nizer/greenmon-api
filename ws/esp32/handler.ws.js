@@ -3,7 +3,6 @@ const { WebSocketClient } = require("../wsclient.ws");
 const { onUpdateAction } = require("./handlers/action.handler");
 const { onCreateAlert } = require("./handlers/alert.handler");
 const { onUpdateCondition } = require("./handlers/condition.handler");
-const { onCreateImage } = require("./handlers/image.handler");
 const { onUpdateInput } = require("./handlers/input.handler");
 const { onCreateReading } = require("./handlers/reading.handler");
 const { onUpdateSchedule } = require("./handlers/schedule.handler");
@@ -19,7 +18,6 @@ const _wsEsp32HandlerMap = new Map([
     ['action:Update', onUpdateAction],
     ['alert:Create', onCreateAlert],
     ['condition:Update', onUpdateCondition],
-    ['image:Create', onCreateImage],
     ['input:Update', onUpdateInput],
     ['reading:Create', onCreateReading],
     ['schedule:Update', onUpdateSchedule],
