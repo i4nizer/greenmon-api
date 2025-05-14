@@ -46,6 +46,7 @@ const onWsEsp32Auth = async (wsClient) => {
 
 	wsClient.ws.on("message", (msg) => onWsEsp32Msg(wsClient, msg))
 	wsClient.ws.on("close", () => onWsEsp32Close(wsClient))
+	wsClient.ws.on("error", (err) => logger.error(err, err))
 
 	// modify for logging
 	const send = wsClient.ws.send
@@ -57,6 +58,7 @@ const onWsEsp32Auth = async (wsClient) => {
 	
 	// send successful authentication
 	wsClient.send("auth", [], "Create", true)	// cleans all files
+	await new Promise(res => setTimeout(() => res(), 10000))	// wait for esp32 to clean files
 	
 	// send all initial data
 	await sendWsEsp32InitialData(wsClient)

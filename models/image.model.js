@@ -21,9 +21,13 @@ const Image = sequelize.define(
 			type: DataTypes.STRING,
 			allowNull: true,
 		},
-		path: {
+		filename: {
 			type: DataTypes.STRING,
 			allowNull: false,
+		},
+		completed: {
+			type: DataTypes.BOOLEAN,
+			defaultValue: false,
 		},
 		outputId: {
 			type: DataTypes.INTEGER,

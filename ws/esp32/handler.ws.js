@@ -3,6 +3,7 @@ const { WebSocketClient } = require("../wsclient.ws");
 const { onUpdateAction } = require("./handlers/action.handler");
 const { onCreateAlert } = require("./handlers/alert.handler");
 const { onUpdateCondition } = require("./handlers/condition.handler");
+const { onCreateImage, onCreateImageChunk, onUpdateImage } = require("./handlers/image.handler");
 const { onUpdateInput } = require("./handlers/input.handler");
 const { onCreateReading } = require("./handlers/reading.handler");
 const { onUpdateSchedule } = require("./handlers/schedule.handler");
@@ -23,6 +24,9 @@ const _wsEsp32HandlerMap = new Map([
     ['schedule:Update', onUpdateSchedule],
     ['sensor:Update', onUpdateSensor],
     ['threshold:Update', onUpdateThreshold],
+    ['image:Create', onCreateImage],
+    ['image:Update', onUpdateImage],
+    ['image-chunk:Create', onCreateImageChunk],
 ])
 
 /**
@@ -33,7 +37,7 @@ const _wsEsp32HandlerMap = new Map([
  */
 const executeEsp32Handler = async (wsClient, event, data, query) => {
     const handler = _wsEsp32HandlerMap.get(`${event}:${query}`)
-    if (handler) return await handler(wsClient, data).catch(error => logger.error(error))
+    if (handler) return await handler(wsClient, data).catch(error => logger.error(error, error))
 
     logger.warn(`Web socket esp32 sent <${event}:${query} ${data?.length}> records but no dedicated handler found.`)
 }
