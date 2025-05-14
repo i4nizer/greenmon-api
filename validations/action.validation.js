@@ -16,8 +16,8 @@ const postActionSchema = Joi.object({
 	duration: Joi.number().integer().required(),
 	priority: Joi.number().integer().optional(),
 	inputId: Joi.number().integer().required(),
-	scheduleId: Joi.number().integer().optional(),
-	thresholdId: Joi.number().integer().optional(),
+	scheduleId: Joi.number().integer().allow(null).optional(),
+	thresholdId: Joi.number().integer().allow(null).optional(),
 	greenhouseId: Joi.number().integer().optional(),
 })
 
@@ -31,8 +31,8 @@ const patchActionSchema = Joi.object({
 	duration: Joi.number().integer().optional(),
 	priority: Joi.number().integer().optional(),
 	inputId: Joi.number().integer().optional(),
-	scheduleId: Joi.number().integer().optional(),
-	thresholdId: Joi.number().integer().optional(),
+	scheduleId: Joi.number().integer().allow(null).optional(),
+	thresholdId: Joi.number().integer().allow(null).optional(),
 	greenhouseId: Joi.number().integer().optional(),
 })
 

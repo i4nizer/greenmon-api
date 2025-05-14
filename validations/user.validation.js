@@ -9,7 +9,7 @@ const signUpSchema = Joi.object({
 
 /** Requires otp and userId. */
 const accountVerificationOTPSchema = Joi.object({
-	otp: Joi.string().length(6).required(),
+	otp: Joi.number().integer().required(),
 	userId: Joi.number().integer().required(),
 })
 
@@ -34,7 +34,7 @@ const forgotPasswordSchema = Joi.object({
 /** Requires email and otp. */
 const resetPasswordOTPSchema = Joi.object({
 	email: Joi.string().email().required(),
-	otp: Joi.string().length(6).required(),
+	otp: Joi.number().integer().required(),
 })
 
 /** Requires email and new password. */

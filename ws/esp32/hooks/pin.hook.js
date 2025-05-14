@@ -1,6 +1,6 @@
 const { logger } = require("../../../utils/logger.util")
 const { sendWsEsp32 } = require("../util.ws")
-const { Greenhouse, MCU, Output, Input, Condition } = require("../../../models/index.model")
+const { Greenhouse, MCU, Output, Input, Condition, Action } = require("../../../models/index.model")
 
 //
 
@@ -67,13 +67,8 @@ const onBeforePinDelete = async (pin, options) => {
 		sendWsEsp32(greenhouse.key, "input", [{ pinId: pin.id }], "Delete")
 
 		// delete pin inputs actions
-		const actions = await Input.findAll({ where: { inputId: inputs.map((i) => i.id) } })
-		sendWsEsp32(
-			greenhouse.key,
-			"action",
-			inputs.map((i) => ({ inputId: i.id })),
-			"Delete"
-		)
+		const actions = await Action.findAll({ where: { inputId: inputs.map((i) => i.id) } })
+		sendWsEsp32(greenhouse.key, "action", inputs.map((i) => ({ inputId: i.id })), "Delete")
 
 		// delete pin outputs
 		const outputs = await Output.findAll({ where: { pinId: pin.id } })

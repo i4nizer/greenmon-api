@@ -1,11 +1,12 @@
 const express = require('express');
 const { bindExpressApp } = require('./ws/index.ws')
 
+
 const env = require('./configs/env.config')
 const { sequelize } = require("./models/index.model")
 
 const { logger } = require('./utils/logger.util')
-const { load: loadDetectionModel } = require('./utils/detection.util')
+// const { load: loadDetectionModel } = require('./utils/detection.util')
 
 const routes = require("./routes/router")
 
@@ -23,6 +24,8 @@ app.use("/", routes);
  */;
 (async () => {
     try {
+        const startTime = Date.now();
+
         // Attempt connecting to database
         await sequelize.authenticate();
         logger.info("Database connected successfully.");
@@ -32,12 +35,14 @@ app.use("/", routes);
         logger.info("Database tables created successfully.");
 
         // Load model for detection
-        await loadDetectionModel()
-        logger.info("Lettuce NPK detection model loaded successfully.");
+        // await loadDetectionModel()
+        // logger.info("Lettuce NPK detection model loaded successfully.");
         
         // Run api after loads
         const url = `http://localhost:${env.port}`
         app.listen(env.port, '0.0.0.0', () => logger.info(`Api running on ${url}.`))
+
+        logger.info(`Api started in ${Date.now() - startTime}ms.`)
 
     } catch (error) {
         

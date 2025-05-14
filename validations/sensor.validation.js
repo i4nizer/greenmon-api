@@ -9,7 +9,7 @@ const getSensorSchema = Joi.object({
 /** Requires name, label, mcuId, and outputs. */
 const postSensorSchema = Joi.object({
 	name: Joi.string().min(3).max(100).required(),
-	label: Joi.string().min(3).max(100).required(),
+	label: Joi.string().allow(null).empty("").max(100).optional(),
 	interval: Joi.number().min(0).optional(),
 	lastread: Joi.number().integer().optional(),
 	readphase: Joi.string().optional(),
@@ -22,7 +22,7 @@ const patchSensorSchema = Joi.object({
 	id: Joi.number().integer().optional(),
 	sensorId: Joi.number().integer().required(),
 	name: Joi.string().min(3).max(100).optional(),
-	label: Joi.string().min(3).max(100).optional(),
+	label: Joi.string().allow(null).empty('').max(100).optional(),
 	interval: Joi.number().min(0).optional(),
 	lastread: Joi.number().integer().optional(),
 	readphase: Joi.string().optional(),

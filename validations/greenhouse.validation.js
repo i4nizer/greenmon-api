@@ -9,7 +9,7 @@ const postGreenhouseSchema = Joi.object({
 /** Requires greenhouseId. */
 const patchGreenhouseSchema = Joi.object({
 	id: Joi.number().integer().optional(),
-	greenhouseId: Joi.string().required(),
+	greenhouseId: Joi.number().integer().required(),
 	name: Joi.string().min(3).max(100).optional(),
 	description: Joi.string().max(500).optional(),
 })

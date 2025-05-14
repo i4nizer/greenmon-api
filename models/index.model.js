@@ -70,6 +70,10 @@ Pin.hasMany(Output, { foreignKey: "pinId", onDelete: "SET NULL" })
 Sensor.belongsTo(MCU, { foreignKey: "mcuId" })
 Sensor.hasMany(Output, { foreignKey: "sensorId", onDelete: "CASCADE" })
 Sensor.hasMany(Hook, { foreignKey: "sensorId", onDelete: "CASCADE" })
+Sensor.beforeDestroy(async (sensor, options) => {
+    const outputs = await Output.findAll({ where: { sensorId: sensor.id } })
+    await Promise.all(outputs.map(o => Pin.update({ mode: 'Unset' }, { where: { id: o.pinId } })))
+})
 
 // Define Hook relationships
 Hook.belongsTo(Sensor, { foreignKey: "sensorId" })
@@ -84,6 +88,10 @@ Output.hasMany(Reading, { foreignKey: "outputId", onDelete: "SET NULL" })
 // Define Actuator relationships
 Actuator.belongsTo(MCU, { foreignKey: "mcuId" })
 Actuator.hasMany(Input, { foreignKey: "actuatorId", onDelete: "CASCADE" })
+Actuator.beforeDestroy(async (actuator, options) => {
+    const inputs = await Input.findAll({ where: { actuatorId: actuator.id } })
+    await Promise.all(inputs.map(i => Pin.update({ mode: 'Unset' }, { where: { id: i.pinId } })))
+})
 
 // Define Input relationships
 Input.belongsTo(Pin, { foreignKey: "pinId" })
