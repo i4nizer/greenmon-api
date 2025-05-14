@@ -23,6 +23,7 @@ const postActionSchema = Joi.object({
 
 /** Requires actionId and optionally other fields. */
 const patchActionSchema = Joi.object({
+	id: Joi.number().integer().optional(),
 	actionId: Joi.number().integer().required(),
 	name: Joi.string().optional(),
 	value: Joi.number().integer().optional(),

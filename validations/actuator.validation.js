@@ -2,8 +2,8 @@ const Joi = require("joi")
 
 /** Requires actuatorId. */
 const getActuatorSchema = Joi.object({
-    mcuId: Joi.string().optional(),
-    actuatorId: Joi.string().required(),
+	mcuId: Joi.string().optional(),
+	actuatorId: Joi.number().integer().optional(),
 })
 
 /** Requires name, label, and mcuId. */
@@ -16,7 +16,8 @@ const postActuatorSchema = Joi.object({
 
 /** Requires actuatorId and optionally name and label. */
 const patchActuatorSchema = Joi.object({
-    actuatorId: Joi.string().required(),
+    id: Joi.number().integer().optional(),
+    actuatorId: Joi.number().integer().required(),
     name: Joi.string().min(3).max(100).optional(),
     label: Joi.string().min(3).max(100).optional(),
     disabled: Joi.boolean().optional(),
@@ -24,7 +25,7 @@ const patchActuatorSchema = Joi.object({
 
 /** Requires actuatorId. */
 const deleteActuatorSchema = Joi.object({
-    actuatorId: Joi.string().required(),
+	actuatorId: Joi.number().integer().required(),
 })
 
 module.exports = {

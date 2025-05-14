@@ -17,6 +17,7 @@ const postHookSchema = Joi.object({
 
 /** Requires hookId and optionally other fields. */
 const patchHookSchema = Joi.object({
+	id: Joi.number().integer().optional(),
 	hookId: Joi.number().integer().required(),
 	type: Joi.string().valid("Before", "During", "After").optional(),
 	sensorId: Joi.number().integer().optional(),

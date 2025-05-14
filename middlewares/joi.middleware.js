@@ -10,7 +10,7 @@ const Joi = require("joi");
  * @returns A middleware function that uses the schema to validate.
  */
 const checkJoi = (schema, prop = "body") => (req, res, next) => {
-    const { error } = schema.validate(req[prop]);
+    const { error } = schema.validate(req[prop], { stripUnknown: true });
     if (error) return next(error);
     next();
 }

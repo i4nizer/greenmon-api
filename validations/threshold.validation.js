@@ -18,6 +18,7 @@ const postThresholdSchema = Joi.object({
 
 /** Requires thresholdId and optionally name, operator, and disabled. */
 const patchThresholdSchema = Joi.object({
+    id: Joi.number().integer().optional(),
     thresholdId: Joi.number().integer().required(),
     name: Joi.string().min(3).max(100).optional(),
     operator: Joi.string().valid("Any", "All").optional(),

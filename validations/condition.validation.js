@@ -16,6 +16,7 @@ const postConditionSchema = Joi.object({
 
 /** Requires conditionId and optionally type, value, and outputId. */
 const patchConditionSchema = Joi.object({
+    id: Joi.number().integer().optional(),
     conditionId: Joi.number().integer().required(),
     type: Joi.string().valid("Equal", "Above", "Below").optional(),
     value: Joi.number().integer().optional(),

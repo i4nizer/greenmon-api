@@ -10,12 +10,12 @@ const signUpSchema = Joi.object({
 /** Requires otp and userId. */
 const accountVerificationOTPSchema = Joi.object({
 	otp: Joi.string().length(6).required(),
-	userId: Joi.string().required(),
+	userId: Joi.number().integer().required(),
 })
 
 /** Requires userId, name, and email. */
 const resendAccountVerificationOTPSchema = Joi.object({
-	userId: Joi.string().required(),
+	userId: Joi.number().integer().required(),
 	name: Joi.string().min(3).max(30).required(),
 	email: Joi.string().email().required(),
 })

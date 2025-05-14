@@ -8,23 +8,24 @@ const postMcuSchema = Joi.object({
 		.items(
 			Joi.object({
 				type: Joi.string().valid("Digital", "Analog").required(),
-				number: Joi.number().required(),
+				number: Joi.number().integer().required(),
 			})
 		)
 		.required(),
-	greenhouseId: Joi.string().required(),
+	greenhouseId: Joi.number().integer().required(),
 })
 
 /** Requires mcuId and optionally name, label, and key. */
 const patchMcuSchema = Joi.object({
-	mcuId: Joi.string().required(),
+	id: Joi.number().integer().optional(),
+	mcuId: Joi.number().integer().required(),
 	name: Joi.string().min(3).max(100).optional(),
 	label: Joi.string().min(3).max(100).optional(),
 })
 
 /** Requires mcuId. */
 const deleteMcuSchema = Joi.object({
-	mcuId: Joi.string().required(),
+	mcuId: Joi.number().integer().required(),
 })
 
 module.exports = {

@@ -16,6 +16,7 @@ const postScheduleSchema = Joi.object({
 
 /** Requires scheduleId and optionally days and times. */
 const patchScheduleSchema = Joi.object({
+    id: Joi.number().integer().optional(),
 	scheduleId: Joi.number().integer().required(),
 	name: Joi.string().min(3).max(100).optional(),
 	days: Joi.array().items(Joi.number().integer().min(0).max(6)).optional(),
