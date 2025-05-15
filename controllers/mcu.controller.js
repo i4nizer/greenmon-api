@@ -41,9 +41,8 @@ const postMcu = async (req, res, next) => {
         const { userId } = req.accessTokenPayload
         const { name, label, pins, greenhouseId } = req.body
 
-        const mcuDoc = await MCU.create({ name, label, greenhouseId })
         const { tokenStr: key } = await createToken(userId, { greenhouseId }, "Api", env.apiLife)
-        await mcuDoc.update({ key })
+        const mcuDoc = await MCU.create({ name, label, key, greenhouseId })
 
         pins.forEach(p => p.mcuId = mcuDoc.id)
         const pinDocs = await Pin.bulkCreate(pins, { validate: true })

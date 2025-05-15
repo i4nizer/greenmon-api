@@ -15,6 +15,7 @@ const {
     deleteGreenhouse
 } = require("../controllers/greenhouse.controller")
 
+const cameraRoutes = require("./camera.route")
 const mcuRoutes = require("./mcu.route")
 const actionRoutes = require("./action.route")
 const scheduleRoutes = require("./schedule.route")
@@ -30,6 +31,7 @@ router.route("/")
     .patch(checkJoi(patchGreenhouseSchema), patchGreenhouse)
     .delete(deleteGreenhouse)
 
+router.use("/camera", cameraRoutes)
 router.use("/mcu", mcuRoutes)
 router.use("/action", actionRoutes)
 router.use("/schedule", scheduleRoutes)

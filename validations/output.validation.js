@@ -12,7 +12,6 @@ const postOutputSchema = Joi.object({
 	icon: Joi.string().optional(),
 	name: Joi.string().min(3).max(100).required(),
 	unit: Joi.string().min(1).max(50).required(),
-	type: Joi.string().min(3).max(50).required(),
 	pinId: Joi.number().integer().required(),
 	sensorId: Joi.number().integer().required(),
 })
@@ -24,7 +23,6 @@ const patchOutputSchema = Joi.object({
 	icon: Joi.string().optional(),
 	name: Joi.string().min(3).max(100).optional(),
 	unit: Joi.string().min(1).max(50).optional(),
-	type: Joi.string().min(3).max(50).optional(),
 	pinId: Joi.number().integer().optional(),
 })
 

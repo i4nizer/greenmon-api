@@ -3,55 +3,58 @@ const { DataTypes } = require("sequelize")
 
 //
 
-const Reading = sequelize.define(
-    "Reading",
+const Camera = sequelize.define(
+	"Camera",
     {
         id: {
             type: DataTypes.INTEGER,
             primaryKey: true,
             autoIncrement: true,
         },
-        icon: {
+        key: {
             type: DataTypes.STRING,
-            defaultValue: "mdi-thermometer",
+            defaultValue: "Temporary Key",
         },
         name: {
             type: DataTypes.STRING,
             allowNull: false,
         },
-        unit: {
+        label: {
             type: DataTypes.STRING,
             allowNull: true,
         },
-        value: {
-            type: DataTypes.FLOAT,
-            defaultValue: 0,
+        detect: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: true,
         },
-        outputId: {
+        interval: {
             type: DataTypes.INTEGER,
-            allowNull: true,
-            references: {
-                model: "outputs",
-                key: "id",
-            },
-            onDelete: "SET NULL",
+            allowNull: false,
         },
-        greenhouseId: {
+		disabled: {
+			type: DataTypes.BOOLEAN,
+			defaultValue: true,
+        },
+		connected: {
+			type: DataTypes.BOOLEAN,
+			defaultValue: false,
+		},
+		greenhouseId: {
 			type: DataTypes.INTEGER,
-			allowNull: true,
+			allowNull: false,
 			references: {
 				model: "greenhouses",
 				key: "id",
 			},
 			onDelete: "CASCADE",
 		},
-    },
-    {
-        timestamps: true,
-        tableName: "readings",
-    }
+	},
+	{
+		timestamps: true,
+		tableName: "cameras",
+	}
 )
 
 //
 
-module.exports = Reading
+module.exports = Camera

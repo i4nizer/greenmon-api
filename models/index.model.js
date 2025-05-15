@@ -10,6 +10,7 @@ const OTP = require("./otp.model")
 const Token = require("./token.model")
 
 const Greenhouse = require("./greenhouse.model")
+const Camera = require("./camera.model")
 
 const MCU = require("./mcu.model")
 const Pin = require("./pin.model")
@@ -49,11 +50,16 @@ Token.belongsTo(User, { foreignKey: "userId" })
 
 // Define Greenhouse relationships
 Greenhouse.belongsTo(User, { foreignKey: "userId" })
+Greenhouse.hasMany(Camera, { foreignKey: "greenhouseId", onDelete: "CASCADE" })
 Greenhouse.hasMany(MCU, { foreignKey: "greenhouseId", onDelete: "CASCADE" })
 Greenhouse.hasMany(Schedule, { foreignKey: "greenhouseId", onDelete: "CASCADE" })
 Greenhouse.hasMany(Threshold, { foreignKey: "greenhouseId", onDelete: "CASCADE" })
 Greenhouse.hasMany(Log, { foreignKey: "greenhouseId", onDelete: "CASCADE" })
 Greenhouse.hasMany(Alert, { foreignKey: "greenhouseId", onDelete: "SET NULL" })
+
+// Define Camera relationships
+Camera.belongsTo(Greenhouse, { foreignKey: "greenhouseId" })
+Camera.hasMany(Image, { foreignKey: "cameraId", onDelete: "SET NULL" })
 
 // Define MCU relationships
 MCU.belongsTo(Greenhouse, { foreignKey: "greenhouseId" })
@@ -82,7 +88,6 @@ Hook.belongsTo(Sensor, { foreignKey: "sensorId" })
 Output.belongsTo(Pin, { foreignKey: "pinId" })
 Output.belongsTo(Sensor, { foreignKey: "sensorId" })
 Output.hasMany(Condition, { foreignKey: "outputId", onDelete: "CASCADE" })
-Output.hasMany(Image, { foreignKey: "outputId", onDelete: "SET NULL" })
 Output.hasMany(Reading, { foreignKey: "outputId", onDelete: "SET NULL" })
 
 // Define Actuator relationships
@@ -131,7 +136,7 @@ Action.belongsTo(Greenhouse, { foreignKey: "greenhouseId" })
 Log.belongsTo(Greenhouse, { foreignKey: "greenhouseId" })
 
 // Define Image relationships
-Image.belongsTo(Output, { foreignKey: "outputId" })
+Image.belongsTo(Camera, { foreignKey: "cameraId" })
 Image.hasMany(Detection, { foreignKey: "imageId", onDelete: "CASCADE" })
 
 // Define Reading relationships

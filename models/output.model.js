@@ -21,10 +21,6 @@ const Output = sequelize.define(
 			type: DataTypes.STRING,
 			allowNull: true,
 		},
-		type: {
-			type: DataTypes.ENUM("Number", "Image"),
-			defaultValue: "Number",
-		},
 		pinId: {
 			type: DataTypes.INTEGER,
 			allowNull: true,

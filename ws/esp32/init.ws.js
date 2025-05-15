@@ -15,7 +15,7 @@ const sendWsEsp32InitialData = async (wsClient) => {
 	const { userId, greenhouseId } = wsClient.payload
 
 	// benchmarking
-	const start = process.hrtime()
+	const ms = Date.now()
 
 	// find all mcus
 	const mcus = await MCU.findAll({ where: { greenhouseId } })
@@ -81,8 +81,8 @@ const sendWsEsp32InitialData = async (wsClient) => {
 	}
 	
 	// benchmark
-	const diff = process.hrtime(start)
-	logger.info(`Web socket initialized with an execution time of ${diff[0] * 1e3 + diff[1] / 1e6} ms.`)
+	const diff = Date.now() - ms
+	logger.info(`Web socket initialized with an execution time of ${diff} ms.`)
 }
 
 //

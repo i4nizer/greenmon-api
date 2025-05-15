@@ -1,6 +1,8 @@
 const sequelize = require("../configs/sequelize.config")
 const { DataTypes } = require("sequelize")
 
+//
+
 const Image = sequelize.define(
 	"Image",
 	{
@@ -9,34 +11,27 @@ const Image = sequelize.define(
 			primaryKey: true,
 			autoIncrement: true,
 		},
-		icon: {
-			type: DataTypes.STRING,
-			defaultValue: "mdi-thermometer",
-		},
-		name: {
-			type: DataTypes.STRING,
-			allowNull: false,
-		},
-		unit: {
-			type: DataTypes.STRING,
-			allowNull: true,
-		},
 		filename: {
 			type: DataTypes.STRING,
 			allowNull: false,
 		},
-		completed: {
-			type: DataTypes.BOOLEAN,
-			defaultValue: false,
-		},
-		outputId: {
+		cameraId: {
 			type: DataTypes.INTEGER,
 			allowNull: true,
 			references: {
-				model: "outputs",
+				model: "cameras",
 				key: "id",
 			},
 			onDelete: "SET NULL",
+		},
+		greenhouseId: {
+			type: DataTypes.INTEGER,
+			allowNull: true,
+			references: {
+				model: "greenhouses",
+				key: "id",
+			},
+			onDelete: "CASCADE",
 		},
 	},
 	{
@@ -44,5 +39,7 @@ const Image = sequelize.define(
 		tableName: "images",
 	}
 )
+
+//
 
 module.exports = Image

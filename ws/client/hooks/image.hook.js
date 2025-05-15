@@ -1,6 +1,6 @@
 const { logger } = require("../../../utils/logger.util")
 const { sendWsClient } = require("../util.ws")
-const { Output, Sensor, MCU, Greenhouse } = require("../../../models/index.model")
+const { Greenhouse } = require("../../../models/index.model")
 
 //
 
@@ -11,10 +11,7 @@ const onAfterImageCreate = async (image, options) => {
 	try {
 		if (options.source == "client") return // Ignore client source
 
-		const output = await Output.findByPk(image.outputId, { attributes: ["sensorId"] })
-		const sensor = await Sensor.findByPk(output.sensorId, { attributes: ["mcuId"] })
-		const mcu = await MCU.findByPk(sensor.mcuId, { attributes: ["greenhouseId"] })
-		const greenhouse = await Greenhouse.findByPk(mcu.greenhouseId, { attributes: ["userId"] })
+		const greenhouse = await Greenhouse.findByPk(image.greenhouseId, { attributes: ["userId"] })
 		sendWsClient(greenhouse.userId, "image", [image], "Create")
 
 	} catch (error) {
