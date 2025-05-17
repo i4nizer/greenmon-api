@@ -1,7 +1,7 @@
 const expressWs = require('express-ws');
 const { onWsEsp32Connect, attachWsEsp32Hooks } = require('./esp32/index.ws');
-const { attachWsClientHooks } = require('./client/hook.ws');
-const { onWsClientConnect } = require('./client/index.ws');
+const { onWsEsp32CamConnect, attachWsEsp32CamHooks } = require('./esp32-cam/index.ws');
+const { onWsClientConnect, attachWsClientHooks } = require("./client/index.ws")
 
 
 
@@ -26,6 +26,10 @@ const bindExpressApp = (app) => {
 	// init route handlers for esp32
 	attachWsEsp32Hooks()
 	_app.ws("/ws-esp32", onWsEsp32Connect)
+	
+	// init route handlers for esp32
+	attachWsEsp32CamHooks()
+	_app.ws("/ws-esp32-cam", onWsEsp32CamConnect)
 
 	// init route handlers for client
 	attachWsClientHooks()

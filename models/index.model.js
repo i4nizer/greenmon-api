@@ -175,6 +175,7 @@ module.exports = {
     Token,
 
     Greenhouse,
+    Camera,
     
     MCU,
     Pin,
