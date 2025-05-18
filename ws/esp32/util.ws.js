@@ -27,7 +27,7 @@ const getWsEsp32 = (key) => _wsEsp32s.filter(ws => ws.key == key);
  * @param {WebSocketClient} wsClient This is the web socket client to be removed.
  */
 const delWsEsp32 = (wsClient) => {
-    const newWsEsp32s = _wsEsp32s.filter(ws => ws.id == wsClient.id);
+    const newWsEsp32s = _wsEsp32s.filter(ws => ws.id != wsClient.id);
     _wsEsp32s.splice(0, _wsEsp32s.length);
     _wsEsp32s.push(...newWsEsp32s);
 };

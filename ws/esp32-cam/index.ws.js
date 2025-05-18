@@ -2,7 +2,7 @@ const env = require("../../configs/env.config");
 const { logger } = require("../../utils/logger.util");
 const { attachWsEsp32CamHooks } = require('./hook.ws')
 const { verifyToken, createToken, revokeToken } = require('../../services/token.service')
-const { delWsEsp32Cam, addWsEsp32Cam } = require("./util.ws");
+const { delWsEsp32Cam, addWsEsp32Cam, getWsEsp32Cam } = require("./util.ws");
 const { sendWsEsp32CamInitialData } = require("./init.ws");
 const { executeEsp32CamHandler } = require("./handler.ws");
 const { Camera } = require("../../models/index.model");
@@ -19,6 +19,8 @@ const { WebSocketClient } = require("../wsclient.ws");
 const onWsEsp32CamMsg = (wsClient, msg) => {
     try {
         // logger.info(`Web socket received: ${msg}.`)
+        // check if included
+        if (getWsEsp32Cam(wsClient.key).length <= 0) addWsEsp32Cam(wsClient)
         
         // a realtime image binary
         const event = wsClient.payload?.realtime ? 'image-realtime' : 'image'
@@ -27,7 +29,7 @@ const onWsEsp32CamMsg = (wsClient, msg) => {
         logger.info(`Web socket received ${event} event from esp32-cam with ${query} and data[] of length ${msg?.length}.`)
         // logger.info(`Web socket received ${event} event from esp32-cam with ${query} and data[${JSON.stringify(data)}].`)// of length ${data?.length}.`)      
         executeEsp32CamHandler(wsClient, event, msg, query)
-        
+
     } catch (error) {
         logger.error(error, error)
     }
