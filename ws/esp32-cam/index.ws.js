@@ -21,7 +21,7 @@ const onWsEsp32CamMsg = (wsClient, msg) => {
         // logger.info(`Web socket received: ${msg}.`)
         
         // a realtime image binary
-        const event = wsClient.payload?.interval < 60 ? 'image-realtime' : 'image'
+        const event = wsClient.payload?.realtime ? 'image-realtime' : 'image'
         const query = 'Create'
     
         logger.info(`Web socket received ${event} event from esp32-cam with ${query} and data[] of length ${msg?.length}.`)
@@ -130,7 +130,7 @@ const onWsEsp32CamConnect = async (ws, req) => {
 
         // find camera
         const cameraDoc = await Camera.findOne({ where: { key: apiKey } })
-        wsClient.payload.interval = cameraDoc.interval
+        wsClient.payload.realtime = cameraDoc.realtime
 
         await onWsEsp32CamAuth(wsClient)
 

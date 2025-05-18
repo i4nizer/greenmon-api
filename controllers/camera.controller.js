@@ -38,14 +38,30 @@ const getCamera = async (req, res, next) => {
 const postCamera = async (req, res, next) => {
     try {
         const { userId } = req.accessTokenPayload
-		const { name, label, detect, interval, disabled, connected, greenhouseId } = req.body
+		const { 
+			name, 
+			label, 
+			detect, 
+			interval,
+			format,
+			quality,
+			resolution,
+			realtime,
+			disabled, 
+			connected,
+			greenhouseId 
+		} = req.body
 
         const cameraDoc = await Camera.create({
-			name,
-			label,
-			detect,
+			name, 
+			label, 
+			detect, 
 			interval,
-			disabled,
+			format,
+			quality,
+			resolution,
+			realtime,
+			disabled, 
 			connected,
 			greenhouseId,
         })
@@ -69,12 +85,40 @@ const postCamera = async (req, res, next) => {
 // Update camera
 const patchCamera = async (req, res, next) => {
 	try {
-		const { cameraId, name, label, detect, interval, disabled, connected } = req.body
+		const { 
+			cameraId, 
+			name, 
+			label, 
+			detect, 
+			interval,
+			format,
+			quality,
+			resolution,
+			realtime,
+			disabled, 
+			connected,
+		} = req.body
 
 		const cameraDoc = await Camera.findByPk(cameraId)
 		if (!cameraDoc) return next(new AppError(404, "Camera not found."))
 
-		await cameraDoc.update({ name, label, detect, interval, disabled, connected }, { source: "client" })
+		await cameraDoc.update(
+			{ 
+				name, 
+				label, 
+				detect, 
+				interval,
+				format,
+				quality,
+				resolution,
+				realtime,
+				disabled, 
+				connected,
+			}, 
+			{ 
+				source: "client",
+			}
+		)
 
 		res.json({ text: "Camera updated successfully." })
 	} catch (error) {

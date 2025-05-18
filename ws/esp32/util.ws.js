@@ -52,10 +52,7 @@ const sendWsEsp32 = (key, event, data, query = 'Update', force = false) => {
             return;
         }
         
-        if (data.length < 10) {
-            ws.send(event, data, query, force)
-            logger.info(`Web socket sent ${event} event to esp32 with ${query} and data[] of length ${data?.length}.`)
-        }
+        if (data.length < 10) ws.send(event, data, query, force)
         else ws.sendChunked(event, data, query, 10, 30, force)
     })
 }

@@ -48,7 +48,6 @@ const sendWsClient = (key, event, data, query = 'Update') => {
         }
 
         ws.send(event, data, query)
-        logger.info(`Web socket sent ${event} event to client with ${query} and data[] of length ${data?.length}.`)
     })
     
 }

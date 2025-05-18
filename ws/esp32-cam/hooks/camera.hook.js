@@ -4,14 +4,14 @@ const { getWsEsp32Cam } = require("../util.ws")
 //
 
 /**
- * Updates the wsClient.payload.interval
+ * Updates the wsClient.payload.realtime
  */
 const onAfterUpdateCamera = async (camera, options) => {
     try {
         const wsClients = getWsEsp32Cam(camera.key)
         wsClients.forEach(ws => {
             ws.send('camera', [camera], 'Update')
-            ws.payload.interval = camera.interval
+            ws.payload.realtime = camera.realtime
         })
         
     } catch (error) {
