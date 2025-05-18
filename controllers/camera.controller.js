@@ -40,9 +40,7 @@ const postCamera = async (req, res, next) => {
         const { userId } = req.accessTokenPayload
 		const { name, label, detect, interval, disabled, connected, greenhouseId } = req.body
 
-        const { tokenStr: key } = await createToken(userId, { greenhouseId }, "Api", env.apiLife)
         const cameraDoc = await Camera.create({
-            key,
 			name,
 			label,
 			detect,
@@ -51,6 +49,13 @@ const postCamera = async (req, res, next) => {
 			connected,
 			greenhouseId,
         })
+		const { tokenStr: key } = await createToken(
+			userId, 
+			{ userId, cameraId: cameraDoc.id, greenhouseId }, 
+			"Api", 
+			env.apiLife
+		)
+		await cameraDoc.update({ key }, { source: 'esp32-cam' })
 
 		res.json({
 			text: "Camera created successfully.",

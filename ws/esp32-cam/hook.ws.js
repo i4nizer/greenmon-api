@@ -1,4 +1,5 @@
 const { Camera } = require("../../models/index.model")
+const { onAfterUpdateCamera } = require("./hooks/camera.hook")
 
 //
 
@@ -9,7 +10,7 @@ const { Camera } = require("../../models/index.model")
 const attachWsEsp32CamHooks = () => {
 
     // Attach camera hooks
-    
+    Camera.afterUpdate(onAfterUpdateCamera)
 }
 
 //

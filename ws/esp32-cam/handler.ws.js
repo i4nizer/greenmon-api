@@ -16,7 +16,7 @@ const _wsEsp32CamHandlerMap = new Map([
 /**
  * @param {WebSocketClient} wsClient This is the web socket of esp32-cam that sent the data.
  * @param {String} event This is the event sent by esp32-cam.
- * @param {Array} data This is the array of data provided by esp32-cam.
+ * @param {Buffer} data This is the binary of data provided by esp32-cam.
  * @param {String} query This is the query part.
  */
 const executeEsp32CamHandler = async (wsClient, event, data, query) => {

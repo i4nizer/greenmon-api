@@ -10,45 +10,42 @@ const { sendWsClient } = require('../../client/util.ws')
  * Creates image record and saves the file for detection.
  *
  * @param {WebSocketClient} wsClient The web socket instance of esp32-cam.
- * @param {Array} data The inputs sent by esp32-cam.
+ * @param {Buffer} data The image buffer sent by esp32-cam.
  */
 const onCreateImage = async (wsClient, data) => {
-    for (const d of data) {
-        
-        if (d?.base64img == null) return;
-        
-        // init path
-        const filedir = path.resolve(__dirname, "../../../images/uploads")
-        const filepath = `${filedir}/${d?.filename}`
-        
-        // convert into base64->jpeg
-        const base64img = Buffer.from(d?.base64img, "base64")
-        const base64str = base64img.toString()
+    // get meta
+    const { cameraId, greenhouseId } = wsClient.payload
 
-        // save the file
-        await fs.writeFile(filepath, base64str)
+    // init path
+    const filedir = path.resolve(__dirname, "../../../images/uploads")
+    const filename = `${Date.now()}-${Math.round(Math.random() * 1e9)}-${Math.round(Math.random() * 1e9)}.jpeg`
+    const filepath = `${filedir}/${filename}`
+    
+    // save the file
+    await fs.writeFile(filepath, data)
 
-        // save the image tuple
-        await Image.create(d, { source: 'esp32-cam' })
-    }
+    // save the image tuple
+    await Image.create(
+        { filename, cameraId, greenhouseId, }, 
+        { hooks: true, source: 'esp32-cam', }
+    )
 }
 
 /**
  * Does not really create image, just broadcasts it to the ws client.
  *
  * @param {WebSocketClient} wsClient The web socket instance of esp32-cam.
- * @param {Array} data The inputs sent by esp32-cam.
+ * @param {Buffer} data The image buffer sent by esp32-cam.
  */
 const onCreateImageRealtime = async (wsClient, data) => {
-    const { userId } = wsClient.payload
+    // get meta
+    const { userId, cameraId, greenhouseId } = wsClient.payload
     
-    for (const d of data) {
+    // convert to base64 before sending
+    const base64img = Buffer.from(data).toString('base64')
+    const payload = [{ base64img, cameraId, greenhouseId }]
 
-        if (d?.base64img == null) return;
-
-        // d = { base64img, cameraId, greenhouseId }
-        sendWsClient(userId, "image-realtime", d, "Create")
-    }
+    sendWsClient(userId, "image-realtime", payload, "Create")
 }
 
 //
