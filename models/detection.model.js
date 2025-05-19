@@ -25,11 +25,11 @@ const Detection = sequelize.define(
             type: DataTypes.FLOAT,
             allowNull: false,
         },
-        width: {
+        w: {
             type: DataTypes.FLOAT,
             allowNull: false,
         },
-        height: {
+        h: {
             type: DataTypes.FLOAT,
             allowNull: false,
         },

@@ -6,7 +6,7 @@ const env = require('./configs/env.config')
 const { sequelize } = require("./models/index.model")
 
 const { logger } = require('./utils/logger.util')
-// const { load: loadDetectionModel } = require('./utils/detection.util')
+const { mlLettuceModelLoad } = require('./utils/model.util')
 
 const routes = require("./routes/router")
 
@@ -35,8 +35,8 @@ app.use("/", routes);
         logger.info("Database tables created successfully.");
 
         // Load model for detection
-        // await loadDetectionModel()
-        // logger.info("Lettuce NPK detection model loaded successfully.");
+        await mlLettuceModelLoad()
+        logger.info("Lettuce NPK detection model loaded successfully.");
         
         // Run api after loads
         const url = `http://localhost:${env.port}`

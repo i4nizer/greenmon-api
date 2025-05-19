@@ -3,6 +3,7 @@ const path = require('path')
 const { Image } = require("../../../models/index.model")
 const { WebSocketClient } = require("../../wsclient.ws")
 const { sendWsClient } = require('../../client/util.ws')
+const { createImageDetection } = require('../../../services/detection.service')
 
 //
 
@@ -25,10 +26,18 @@ const onCreateImage = async (wsClient, data) => {
     await fs.writeFile(filepath, data)
 
     // save the image tuple
-    await Image.create(
+    const imageDoc = await Image.create(
         { filename, cameraId, greenhouseId, }, 
         { hooks: true, source: 'esp32-cam', }
     )
+    sendWsClient('image', [imageDoc], 'Create')
+
+    // detect if set
+    if (wsClient.payload?.detect) {
+        const { bboxes, logs, alerts, detections } = await createImageDetection(imageDoc)
+        console.log(bboxes, logs, alerts, detections)
+        sendWsClient('detection', detections, 'Create')
+    }
 }
 
 /**

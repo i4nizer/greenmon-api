@@ -1,5 +1,5 @@
-const { predict } = require('../utils/detection.util')
-const { Log, Alert, Detection, Output, Sensor, MCU, Greenhouse } = require('../models/index.model')
+const { mlLettuceModelPredict } = require('../utils/model.util')
+const { Log, Alert, Detection, Greenhouse } = require('../models/index.model')
 
 //
 
@@ -9,21 +9,18 @@ const { Log, Alert, Detection, Output, Sensor, MCU, Greenhouse } = require('../m
  * 
  * @param {{
  *  id: number,
- *  icon: string,
- *  name: string,
- *  unit: string,
- *  path: string
- *  outputId: number
+ *  filename: string
+ *  cameraId: number
+ *  greenhouseId: number
  * }} image The image object created after insertion to database.
  */
 const createImageDetection = async (image) => {
-    const bboxes = await predict(image.path)
-    const promises = []
+    const bboxes = await mlLettuceModelPredict(`./images/uploads/${image.filename}`)
+    const logs = []
+    const alerts = []
+    const detections = []
 
-    const output = await Output.findByPk(image.outputId, { attributes: ['sensorId'] })
-    const sensor = await Sensor.findByPk(output.sensorId, { attributes: ['mcuId'] })
-    const mcu = await MCU.findByPk(sensor.mcuId, { attributes: ['greenhouseId'] })
-    const greenhouse = await Greenhouse.findByPk(mcu.greenhouseId, { attributes: ['userId'] })
+    const greenhouse = await Greenhouse.findByPk(image.greenhouseId, { attributes: ['userId'] })
 
     for (const bbox of bboxes) {
         const { box, class: label, confidence } = bbox
@@ -32,37 +29,42 @@ const createImageDetection = async (image) => {
         const detection = Detection.create({
             class: label,
             confidence,
-            x, y, width: w, height: h,
+            x, y, w, h,
             imageId: image.id,
         })
 
-        promises.push(detection)
+        detections.push(detection)
 
         if (label == 'Healthy') {
             const log = Log.create({
 				title: "NPK Detection",
-                message: `Healthy lettuce detected on ${image.name}, ${image.path}.`,
-                greenhouseId: mcu.greenhouseId,
+                message: `Healthy lettuce detected on ${image.filename}.`,
+                greenhouseId: image.greenhouseId,
             })
 
-            promises.push(log)
+            logs.push(log)
         }
         else {
             const alert = Alert.create({
                 title: "NPK Detection",
-                message: `${label} lettuce detected on ${image.name}, ${image.path}.`,
-                severity: "Error",
+                message: `${label} lettuce detected on ${image.filename}.`,
+                severity: "Warning",
                 viewed: false,
                 emailed: false,
-                greenhouseId: mcu.greenhouseId,
+                greenhouseId: image.greenhouseId,
                 userId: greenhouse.userId,
             })
 
-            promises.push(alert)
+            alerts.push(alert)
         }
     }
-
-    await Promise.all(promises)
+    
+    return {
+        bboxes,
+        logs: await Promise.all(logs),
+        alerts: await Promise.all(alerts),
+        detections: await Promise.all(detections),
+    }
 }
 
 //

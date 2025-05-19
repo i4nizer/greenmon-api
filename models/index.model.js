@@ -149,16 +149,13 @@ Detection.belongsTo(Image, { foreignKey: "imageId" })
 Alert.belongsTo(User, { foreignKey: "userId" })
 Alert.belongsTo(Greenhouse, { foreignKey: "greenhouseId" })
 Alert.afterCreate(async (alert, options) => {
-    try {
-        const user = await User.findByPk(alert.userId)
-        const { subject, text } = craftAlertEmail(user.name, alert.title, alert.message, alert.severity)
-        
-        await mail(user.email, subject, text)
-        alert.emailed = true
-        await Alert.update(alert, { where: { id: alert.id } })
-    } catch (error) {
-        logger.error(error?.message, error)
-    }
+    const user = await User.findByPk(alert.userId)
+    const { subject, text } = craftAlertEmail(user.name, alert.title, alert.message, alert.severity)
+    
+    mail(user.email, subject, text)
+        .then(() => alert.emailed = true)
+        .then(async () => await Alert.update(alert, { where: { id: alert.id } }))
+        .catch(err => logger.error(err, err))
 })
 
 

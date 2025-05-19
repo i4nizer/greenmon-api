@@ -11,6 +11,7 @@ const onAfterUpdateCamera = async (camera, options) => {
         const wsClients = getWsEsp32Cam(camera.key)
         wsClients.forEach(ws => {
             ws.send('camera', [camera], 'Update')
+            ws.payload.detect = camera.detect
             ws.payload.realtime = camera.realtime
         })
         

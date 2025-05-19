@@ -241,4 +241,8 @@ const unload = () => {
 
 //
 
-module.exports = { load, predict, unload }
+module.exports = {
+    mlLettuceModelLoad: load,
+    mlLettuceModelPredict: predict,
+    mlLettuceModelUnload: unload,
+}
