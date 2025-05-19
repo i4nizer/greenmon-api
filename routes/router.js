@@ -10,7 +10,7 @@ const userRoutes = require("./user.route")
 
 //
 
-router.use(cors({ origin: ["*", env.clientDomain], credentials: false }))
+router.use(cors({ origin: '*', methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'], credentials: true }))
 router.use(express.json())
 router.use(loggerMiddleware)
 
