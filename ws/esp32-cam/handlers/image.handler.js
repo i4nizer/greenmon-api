@@ -15,7 +15,7 @@ const { createImageDetection } = require('../../../services/detection.service')
  */
 const onCreateImage = async (wsClient, data) => {
     // get meta
-    const { cameraId, greenhouseId } = wsClient.payload
+    const { userId, cameraId, greenhouseId } = wsClient.payload
 
     // init path
     const filedir = path.resolve(__dirname, "../../../images/uploads")
@@ -35,8 +35,7 @@ const onCreateImage = async (wsClient, data) => {
     // detect if set
     if (wsClient.payload?.detect) {
         const { bboxes, logs, alerts, detections } = await createImageDetection(imageDoc)
-        console.log(bboxes, logs, alerts, detections)
-        sendWsClient('detection', detections, 'Create')
+        sendWsClient(userId, 'detection', detections, 'Create')
     }
 }
 
