@@ -204,12 +204,6 @@ const load = async () => {
     modelInstance = model
     modelLoading = false
 
-    // Warm up the model
-    await predict(`${path.resolve(__dirname, "../images/warmers/healthy.jpg")}`)
-    await predict(`${path.resolve(__dirname, "../images/warmers/nitrogen.jpg")}`)
-    await predict(`${path.resolve(__dirname, "../images/warmers/phosphorus.jpg")}`)
-    await predict(`${path.resolve(__dirname, "../images/warmers/potassium.jpg")}`)
-
     return model;
 }
 

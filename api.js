@@ -1,5 +1,6 @@
 const express = require('express');
 const { bindExpressApp } = require('./ws/index.ws')
+const fs = require("fs/promises")
 
 
 const env = require('./configs/env.config')
@@ -25,6 +26,10 @@ app.use("/", routes);
 (async () => {
     try {
         const startTime = Date.now();
+
+        // Check images directory
+        await fs.access('./images').catch(async () => await fs.mkdir('./images'))
+        await fs.access('./images/uploads').catch(async () => await fs.mkdir('./images/uploads'))
 
         // Attempt connecting to database
         await sequelize.authenticate();
