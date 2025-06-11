@@ -1,6 +1,6 @@
 require('dotenv').config()
 
-
+//
 
 /**
  * Injected variables from .env file.
@@ -44,8 +44,13 @@ const env = {
 	apiKey: process.env.API_KEY,
 	accessKey: process.env.ACCESS_KEY,
 	refreshKey: process.env.REFRESH_KEY,
+
+	// Private keys for cloudinary
+	cloudinaryCloudName: process.env.CLOUDINARY_CLOUD_NAME,
+	cloudinaryApiKey: process.env.CLOUDINARY_API_KEY,
+	cloudinaryApiSecret: process.env.CLOUDINARY_API_SECRET,
 }
 
-
+//
 
 module.exports = env

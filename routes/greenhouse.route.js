@@ -8,7 +8,6 @@ const {
 } = require("../validations/greenhouse.validation")
 
 const { checkJoi } = require("../middlewares/joi.middleware")
-const { checkAccessToken } = require("../middlewares/token.middleware")
 
 const {
     getGreenhouse,
@@ -44,7 +43,6 @@ router.use("/log", logRoutes)
 router.use("/alert", alertRoutes)
 router.use("/image", imageRoutes)
 router.use("/reading", readingRoutes)
-router.use("/uploads", checkAccessToken, express.static(path.join(__dirname, "../images/uploads")))
     
 //
 

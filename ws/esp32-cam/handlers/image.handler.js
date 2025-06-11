@@ -1,5 +1,5 @@
-const fs = require('fs/promises')
-const path = require('path')
+const cloudinary = require("../../../configs/cloudinary.config")
+const { Readable } = require("stream")
 const { Image } = require("../../../models/index.model")
 const { WebSocketClient } = require("../../wsclient.ws")
 const { sendWsClient } = require('../../client/util.ws')
@@ -17,13 +17,19 @@ const onCreateImage = async (wsClient, data) => {
     // get meta
     const { userId, cameraId, greenhouseId } = wsClient.payload
 
-    // init path
-    const filedir = path.resolve(__dirname, "../../../images/uploads")
+    // randomize filename
     const filename = `${Date.now()}-${Math.round(Math.random() * 1e9)}-${Math.round(Math.random() * 1e9)}.jpeg`
-    const filepath = `${filedir}/${filename}`
     
-    // save the file
-    await fs.writeFile(filepath, data)
+    // cloudinary stream
+    const stream = cloudinary.uploader.upload_stream(filename, {
+        type: "authenticated",
+        folder: "upload",
+        public_id: filename,
+        resource_type: "image"
+    })
+
+    // stream image to cloudinary
+    Readable.from(data).pipe(stream)
 
     // save the image tuple
     const imageDoc = await Image.create(

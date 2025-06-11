@@ -1,7 +1,10 @@
+const axios = require("axios")
+const cloudinary = require("../configs/cloudinary.config")
 const { Op } = require("sequelize")
 const { Image, Detection } = require("../models/index.model")
 const { Transform } = require("stream")
 const { stringify: csvStringify } = require("csv-stringify")
+const env = require("../configs/env.config")
 
 //
 
@@ -198,10 +201,30 @@ const getImageCount = async (req, res, next) => {
 	}
 }
 
+const getImageUpload = async (req, res, next) => {
+	try {
+		const { filename } = req.query
+		const url = cloudinary.url(`upload/${filename}`, {
+			type: "authenticated",
+			secure: true,
+			sign_url: true,
+			resource_type: "image",
+		})
+
+		const cldres = await axios.get(url, { responseType: "stream" })
+		res.setHeader("Content-Type", cldres.headers["content-type"])
+		cldres.data.pipe(res)
+
+	} catch (error) {
+		next(error)
+	}
+}
+
 //
 
 module.exports = {
 	getImage,
 	getImageCsv,
 	getImageCount,
+	getImageUpload,
 }

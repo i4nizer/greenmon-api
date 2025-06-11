@@ -14,8 +14,14 @@ const getImageSchema = Joi.object({
 	detection: Joi.boolean().optional().default(false),
 })
 
+/** Checks filename. */
+const getImageUploadSchema = Joi.object({
+	filename: Joi.string().required(),
+})
+
 //
 
 module.exports = {
 	getImageSchema,
+	getImageUploadSchema,
 }
