@@ -27,7 +27,7 @@ const getImage = async (req, res, next) => {
 			? {
 				where: { ...(classes && { class: { [Op.in]: classes?.split(',') } }) },
 				model: Detection,
-				required: !!classes,
+				required: !!classes && !classes?.split(',')?.includes('No Lettuce'),
 			  }
 			: undefined
 
