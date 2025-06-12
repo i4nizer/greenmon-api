@@ -12,6 +12,7 @@ const getImageSchema = Joi.object({
 	limit: Joi.number().integer().min(1).optional(),
 	offset: Joi.number().integer().min(0).optional(),
 	detection: Joi.boolean().optional().default(false),
+	classes: Joi.string().optional(),
 })
 
 /** Checks filename. */

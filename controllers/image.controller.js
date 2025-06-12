@@ -11,7 +11,7 @@ const env = require("../configs/env.config")
 /** Get images with paging support (limit, offset) */
 const getImage = async (req, res, next) => {
 	try {
-		const { limit, offset, imageId, cameraId, greenhouseId, year, month, detection } = req.query
+		const { limit, offset, imageId, cameraId, greenhouseId, year, month, detection, classes } = req.query
 
 		const filter = {
 			...(imageId && { id: imageId }),
@@ -25,8 +25,9 @@ const getImage = async (req, res, next) => {
 		}
 		const include = detection
 			? {
-					model: Detection,
-					required: false,
+				where: { ...(classes && { class: { [Op.in]: classes?.split(',') } }) },
+				model: Detection,
+				required: !!classes,
 			  }
 			: undefined
 
