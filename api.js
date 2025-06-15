@@ -1,7 +1,7 @@
 const express = require('express');
 const { bindExpressApp } = require('./ws/index.ws')
 
-
+const fs = require('fs/promises');
 const env = require('./configs/env.config')
 const { sequelize } = require("./models/index.model")
 
@@ -38,13 +38,18 @@ app.use("/", routes);
         // Load model for detection
         await mlLettuceModelLoad()
         logger.info("Lettuce NPK detection model loaded successfully.");
+
+        // Ensure images directory exists
+        await fs.mkdir("./images", { recursive: true });
+        await fs.mkdir("./images/uploads", { recursive: true });
+        logger.info("Images directory checked/created successfully.");
         
         // Wake workers
         await workerInit()
         logger.info("Workers started successfully.");
         
         // Run api after loads
-        const url = `http://localhost:${env.port}`
+        const url = `https://greenmon-api-production.up.railway.app:${env.port}`
         app.listen(env.port, '0.0.0.0', () => logger.info(`Api running on ${url}.`))
 
         logger.info(`Api started in ${Date.now() - startTime}ms.`)
