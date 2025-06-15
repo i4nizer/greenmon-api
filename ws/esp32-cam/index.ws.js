@@ -88,10 +88,10 @@ const onWsEsp32CamTokenExpired = async (wsClient) => {
     try {
         // revoke
         const { payload } = await revokeToken(wsClient.key, "Api")
-        const { userId, greenhouseId } = payload
+        const { userId, cameraId, greenhouseId } = payload
 
         // create new token
-        const { tokenStr: token } = await createToken(userId, { greenhouseId }, "Api", env.apiLife)
+        const { tokenStr: token } = await createToken(userId, { userId, cameraId, greenhouseId }, "Api", env.apiLife)
 
         // also save token as the camera key
         await Camera.update({ key: token }, { where: { id: greenhouseId }, source: "esp32-cam" })
@@ -132,8 +132,9 @@ const onWsEsp32CamConnect = async (ws, req) => {
 
         // find camera
         const cameraDoc = await Camera.findOne({ where: { key: apiKey } })
-        wsClient.payload.realtime = cameraDoc.realtime
-
+        wsClient.payload.detect = cameraDoc.dataValues.detect
+        wsClient.payload.realtime = cameraDoc.dataValues.realtime
+        
         await onWsEsp32CamAuth(wsClient)
 
     } catch (error) {

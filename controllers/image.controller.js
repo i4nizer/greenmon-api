@@ -1,8 +1,11 @@
+const fs = require('fs/promises')
+const path = require('path')
+const fssync = require('fs')
 const axios = require("axios")
 const cloudinary = require("../configs/cloudinary.config")
 const { Op } = require("sequelize")
 const { Image, Detection } = require("../models/index.model")
-const { Transform } = require("stream")
+const { Transform, Readable } = require("stream")
 const { stringify: csvStringify } = require("csv-stringify")
 const env = require("../configs/env.config")
 
@@ -205,16 +208,38 @@ const getImageCount = async (req, res, next) => {
 const getImageUpload = async (req, res, next) => {
 	try {
 		const { filename } = req.query
-		const url = cloudinary.url(`upload/${filename}`, {
-			type: "authenticated",
-			secure: true,
-			sign_url: true,
-			resource_type: "image",
-		})
+		const filepath = path.resolve(__dirname, `../images/uploads/${filename}.jpg`)
+		
+		// check local availability
+		let cached = true
+		await fs.access(filepath).catch(_ => cached = false)
 
-		const cldres = await axios.get(url, { responseType: "stream" })
-		res.setHeader("Content-Type", cldres.headers["content-type"])
-		cldres.data.pipe(res)
+		// serve if available
+		if (cached) {
+			const imageBuffer = await fs.readFile(filepath)
+			res.setHeader("Content-Type", "image/jpeg")
+			Readable.from(imageBuffer).pipe(res)
+		}
+		// else fetch, serve, cache
+		else {
+			const url = cloudinary.url(`upload/${filename}`, {
+				type: "authenticated",
+				secure: true,
+				sign_url: true,
+				resource_type: "image",
+			})
+	
+			const cldres = await axios.get(url, { responseType: "stream" })
+			res.setHeader("Content-Type", cldres.headers["content-type"])
+			cldres.data.pipe(res)
+
+			const fileStream = fssync.createWriteStream(filepath)
+			cldres.data.pipe(fileStream)
+			await new Promise((resolve, reject) => {
+				fileStream.on('error', err => reject(err))
+				fileStream.on('finish', _ => resolve())
+			})
+		}
 
 	} catch (error) {
 		next(error)

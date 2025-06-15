@@ -33,6 +33,11 @@ const Image = sequelize.define(
 			},
 			onDelete: "CASCADE",
 		},
+		uploadedAt: {
+			type: DataTypes.DATE,
+			allowNull: true,
+			defaultValue: null,
+		},
 	},
 	{
 		timestamps: true,

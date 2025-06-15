@@ -8,7 +8,8 @@ const { sequelize } = require("./models/index.model")
 const { logger } = require('./utils/logger.util')
 const { mlLettuceModelLoad } = require('./utils/model.util')
 
-const routes = require("./routes/router")
+const routes = require("./routes/router");
+const { workerInit } = require('./workers/index.worker');
 
 
 /**
@@ -37,6 +38,10 @@ app.use("/", routes);
         // Load model for detection
         await mlLettuceModelLoad()
         logger.info("Lettuce NPK detection model loaded successfully.");
+        
+        // Wake workers
+        await workerInit()
+        logger.info("Workers started successfully.");
         
         // Run api after loads
         const url = `http://localhost:${env.port}`

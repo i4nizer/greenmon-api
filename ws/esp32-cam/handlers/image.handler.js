@@ -1,5 +1,5 @@
-const cloudinary = require("../../../configs/cloudinary.config")
-const { Readable } = require("stream")
+const fs = require('fs/promises')
+const path = require('path')
 const { Image } = require("../../../models/index.model")
 const { WebSocketClient } = require("../../wsclient.ws")
 const { sendWsClient } = require('../../client/util.ws')
@@ -18,22 +18,15 @@ const onCreateImage = async (wsClient, data) => {
     const { userId, cameraId, greenhouseId } = wsClient.payload
 
     // randomize filename
-    const filename = `${Date.now()}-${Math.round(Math.random() * 1e9)}-${Math.round(Math.random() * 1e9)}.jpeg`
-    
-    // cloudinary stream
-    const stream = cloudinary.uploader.upload_stream(filename, {
-        type: "authenticated",
-        folder: "upload",
-        public_id: filename,
-        resource_type: "image"
-    })
+    const filename = `${Date.now()}-${Math.round(Math.random() * 1e9)}-${Math.round(Math.random() * 1e9)}`
+    const filepath = path.resolve(__dirname, `../../../images/uploads/${filename}.jpg`)
 
-    // stream image to cloudinary
-    Readable.from(data).pipe(stream)
+    // save file to disk
+    await fs.writeFile(filepath, data)
 
     // save the image tuple
     const imageDoc = await Image.create(
-        { filename, cameraId, greenhouseId, }, 
+        { filename, cameraId, greenhouseId, updatedAt: null }, 
         { hooks: true, source: 'esp32-cam', }
     )
     sendWsClient('image', [imageDoc], 'Create')

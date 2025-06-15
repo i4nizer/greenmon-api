@@ -21,7 +21,7 @@ const _wsEsp32CamHandlerMap = new Map([
  */
 const executeEsp32CamHandler = async (wsClient, event, data, query) => {
     const handler = _wsEsp32CamHandlerMap.get(`${event}:${query}`)
-    if (handler) return await handler(wsClient, data).catch(error => logger.error(error, error))
+    if (handler) return await handler(wsClient, data).catch(error => logger.error(error.message, error))
 
     logger.warn(`Web socket esp32-cam sent <${event}:${query} ${data?.length}> records but no dedicated handler found.`)
 }
