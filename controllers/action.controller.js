@@ -32,7 +32,7 @@ const getAction = async (req, res, next) => {
 /** Responds with create success. */
 const postAction = async (req, res, next) => {
 	try {
-		const { name, value, delay, duration, priority, inputId, scheduleId, thresholdId, greenhouseId } = req.body
+		const { name, value, delay, timeout, duration, priority, inputId, scheduleId, thresholdId, greenhouseId } = req.body
 
 		if (thresholdId) {
 			const thresholdDoc = await Threshold.findByPk(thresholdId)
@@ -53,6 +53,7 @@ const postAction = async (req, res, next) => {
 			name,
 			value,
 			delay,
+			timeout,
 			duration,
 			priority,
 			inputId,
@@ -75,7 +76,7 @@ const postAction = async (req, res, next) => {
 /** Responds with update success. */
 const patchAction = async (req, res, next) => {
 	try {
-		const { actionId, name, value, delay, duration, priority, inputId, scheduleId, thresholdId } = req.body
+		const { actionId, name, value, delay, timeout, duration, priority, inputId, scheduleId, thresholdId } = req.body
 
 		const actionDoc = await Action.findByPk(actionId)
 		if (!actionDoc) return next(new AppError(404, "Action not found."))
@@ -84,6 +85,7 @@ const patchAction = async (req, res, next) => {
 			name, 
 			value, 
 			delay,
+			timeout,
 			duration, 
 			priority, 
 			inputId, 

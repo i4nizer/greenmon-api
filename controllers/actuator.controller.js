@@ -25,7 +25,7 @@ const getActuator = async (req, res, next) => {
 /** Responds with create success. */
 const postActuator = async (req, res, next) => {
     try {
-        const { name, label, mcuId } = req.body;
+        const { name, label, mcuId, disabled } = req.body;
 
         const mcuDoc = await MCU.findByPk(mcuId);
         if (!mcuDoc) return next(new AppError(404, "MCU not found."));
@@ -34,6 +34,7 @@ const postActuator = async (req, res, next) => {
             name,
             label,
             mcuId,
+            disabled,
         }, {
             source: 'client',
         });

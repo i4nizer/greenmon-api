@@ -21,9 +21,13 @@ const Action = sequelize.define(
 			type: DataTypes.INTEGER,
 			defaultValue: 0,
 		},
+		timeout: {
+			type: DataTypes.INTEGER,	// limits execution time, must be inactive before this
+			defaultValue: 10,			// purpose is to avoid hanging actions
+		},
 		duration: {
-			type: DataTypes.INTEGER,
-			allowNull: false,
+			type: DataTypes.INTEGER,	// returns to previous state after this duration
+			defaultValue: -1,			// purpose is to make actions that reverts input to its previous state
 		},
 		priority: {
 			type: DataTypes.INTEGER,
