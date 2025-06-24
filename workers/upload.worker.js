@@ -4,6 +4,7 @@ const cloudinary = require("../configs/cloudinary.config")
 const { Image } = require('../models/index.model')
 const { Readable } = require('stream')
 const { Op } = require('sequelize')
+const { logger } = require('../utils/logger.util')
 
 //
 
@@ -77,12 +78,16 @@ const workerInitUpload = async () => {
     })
 
     // now loop it
-    setInterval(() => workerLoopUpload(), 1000)
+    setInterval(() => {
+        if (uploadState.looping || uploadQueue.length <= 0) return
+        uploadState.looping = true
+        workerLoopUpload()
+            .catch(err => logger.error(err?.message, err))
+            .finally(() => uploadState.looping = false)
+    }, 1000)
 }
 
 const workerLoopUpload = async () => {
-    if (uploadState.looping) return
-    uploadState.looping = true
 
     // helper function to execute on each queue
     const uploadImage = async (queue) => {
@@ -107,6 +112,7 @@ const workerLoopUpload = async () => {
         uploadPromises.push(
             uploadImage(queue)
                 .then(_ => queue.uploaded = true)
+                .then(_ => logger.info(`Worker uploaded image ${queue.filename} successfully.`))
                 .catch(_ => queue.uploaded = false)
                 .finally(_ => queue.uploading = false)
         )
@@ -132,9 +138,6 @@ const workerLoopUpload = async () => {
         { uploadedAt: Date.now() },
         { where: { id: { [Op.in]: uploadedIds } } }
     )
-
-    // end loop for next
-    uploadState.looping = false
 }
 
 //

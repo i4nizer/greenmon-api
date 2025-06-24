@@ -1,10 +1,6 @@
 const sequelize = require("../configs/sequelize.config")
 const sequelizeStream = require("node-sequelize-stream")
 
-const { mail } = require("../utils/mail.util")
-const { logger } = require("../utils/logger.util")
-const { craftAlertEmail } = require("../configs/mail.config")
-
 const User = require("./user.model")
 const OTP = require("./otp.model")
 const Token = require("./token.model")
@@ -33,7 +29,7 @@ const Image = require("./image.model")
 const Reading = require("./reading.model")
 const Detection = require("./detection.model")
 
-
+//
 
 // Define User relationships
 User.hasMany(OTP, { foreignKey: "userId", onDelete: "CASCADE" })
@@ -148,20 +144,12 @@ Detection.belongsTo(Image, { foreignKey: "imageId" })
 // Define Alert relationships
 Alert.belongsTo(User, { foreignKey: "userId" })
 Alert.belongsTo(Greenhouse, { foreignKey: "greenhouseId" })
-Alert.afterCreate(async (alert, options) => {
-    const user = await User.findByPk(alert.userId)
-    const { subject, text } = craftAlertEmail(user.name, alert.title, alert.message, alert.severity)
-    
-    mail(user.email, subject, text)
-        .then(() => alert.emailed = true)
-        .then(async () => await Alert.update(alert, { where: { id: alert.id } }))
-        .catch(err => logger.error(err, err))
-})
 
 
 // Allow data streaming
 sequelizeStream(sequelize, 100, true)
 
+//
 
 // Export models
 module.exports = {

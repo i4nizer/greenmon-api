@@ -186,7 +186,7 @@ const craftSuccessfulSignOutMail = (name, datetime = new Date()) => {
  * @param {String} severity The severity level (Info, Success, Warning, Error).
  */
 const craftAlertEmail = (name, title, message, severity = "Info") => {
-    let subject = `Alert - ${severity} - Greenmon`
+    let subject = `${title} - Greenmon ${severity} Alert`
 
     let text = `Hi ${name},\n`
     text += "You have a new alert from your Greenmon system.\n\n"
@@ -195,7 +195,7 @@ const craftAlertEmail = (name, title, message, severity = "Info") => {
     text += `Severity: ${severity}\n\n`
     text += "Please check your dashboard for more details.\n"
     text += "Need help? Contact our support team.\n"
-    text += "Best,\n"
+    text += "\nBest,\n"
     text += "The Greenmon Team"
 
     return { subject, text }
