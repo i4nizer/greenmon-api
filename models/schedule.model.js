@@ -25,6 +25,10 @@ const Schedule = sequelize.define(
 			type: DataTypes.BOOLEAN,
 			defaultValue: true,
 		},
+		activated: {
+			type: DataTypes.BOOLEAN,
+			defaultValue: false,
+		},
 		greenhouseId: {
 			type: DataTypes.INTEGER,
 			allowNull: false,
