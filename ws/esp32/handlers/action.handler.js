@@ -1,5 +1,7 @@
+const { logger } = require("../../../utils/logger.util")
 const { Action } = require("../../../models/index.model")
 const { WebSocketClient } = require("../../wsclient.ws")
+const { updateActionSchema } = require('../validations/action.validation')
 
 //
 
@@ -11,8 +13,10 @@ const { WebSocketClient } = require("../../wsclient.ws")
  */
 const onUpdateAction = async (wsClient, data) => {
 	for (const d of data) {
-		d.updatedAt = null
-		await Action.update(d, { where: { id: d.id }, individualHooks: true, source: "esp32" })
+		const { value, error } = updateActionSchema.validate(d, { stripUnknown: true })
+		
+		if (error) logger.error(`Web socket action update validation error ${error.message}`, error)
+		else await Action.update(value, { where: { id: value.id }, individualHooks: true, source: "esp32" })
 	}
 }
 

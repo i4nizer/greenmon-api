@@ -33,7 +33,7 @@ const onCreateImage = async (wsClient, data) => {
 
     // detect if set
     if (wsClient.payload?.detect) {
-        const { bboxes, logs, alerts, detections } = await createImageDetection(imageDoc)
+        const { bboxes, detections } = await createImageDetection(imageDoc)
         sendWsClient(userId, 'detection', detections, 'Create')
     }
 }

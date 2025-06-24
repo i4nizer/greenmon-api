@@ -1,5 +1,7 @@
+const { logger } = require("../../../utils/logger.util")
 const { Threshold } = require("../../../models/index.model")
 const { WebSocketClient } = require("../../wsclient.ws")
+const { updateThresholdSchema } = require('../validations/threshold.validation')
 
 //
 
@@ -11,8 +13,10 @@ const { WebSocketClient } = require("../../wsclient.ws")
  */
 const onUpdateThreshold = async (wsClient, data) => {
 	for (const d of data) {
-		d.updatedAt = null
-		await Threshold.update(d, { where: { id: d.id }, individualHooks: true, source: "esp32" })
+		const { value, error } = updateThresholdSchema.validate(d, { stripUnknown: true })
+
+		if (error) logger.error(`Web socket threshold update validation error ${error.message}.`, error)
+		else await Threshold.update(value, { where: { id: value.id }, individualHooks: true, source: "esp32" })
 	}
 }
 

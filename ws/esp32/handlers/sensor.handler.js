@@ -1,5 +1,7 @@
 const { Sensor } = require("../../../models/index.model")
+const { logger } = require("../../../utils/logger.util")
 const { WebSocketClient } = require("../../wsclient.ws")
+const { updateSensorSchema } = require('../validations/sensor.validation')
 
 //
 
@@ -11,8 +13,10 @@ const { WebSocketClient } = require("../../wsclient.ws")
  */
 const onUpdateSensor = async (wsClient, data) => {
 	for (const d of data) {
-		d.updatedAt = null
-		await Sensor.update(d, { where: { id: d.id }, individualHooks: true, source: "esp32" })
+		const { value, error } = updateSensorSchema.validate(d, { stripUnknown: true })
+
+		if (error) logger.error(`Web socket sensor update validation error ${error.message}.`, error)
+		else await Sensor.update(value, { where: { id: value.id }, individualHooks: true, source: "esp32" })
 	}
 }
 

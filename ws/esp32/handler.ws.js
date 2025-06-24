@@ -1,9 +1,9 @@
 const { logger } = require("../../utils/logger.util");
 const { WebSocketClient } = require("../wsclient.ws");
 const { onUpdateAction } = require("./handlers/action.handler");
-const { onCreateAlert } = require("./handlers/alert.handler");
 const { onUpdateCondition } = require("./handlers/condition.handler");
 const { onUpdateInput } = require("./handlers/input.handler");
+const { onUpdateMcu } = require("./handlers/mcu.handler");
 const { onCreateReading } = require("./handlers/reading.handler");
 const { onUpdateSchedule } = require("./handlers/schedule.handler");
 const { onUpdateSensor } = require("./handlers/sensor.handler");
@@ -16,9 +16,9 @@ const { onUpdateThreshold } = require("./handlers/threshold.handler");
  */
 const _wsEsp32HandlerMap = new Map([
     ['action:Update', onUpdateAction],
-    ['alert:Create', onCreateAlert],
     ['condition:Update', onUpdateCondition],
     ['input:Update', onUpdateInput],
+    ['mcu:Update', onUpdateMcu],
     ['reading:Create', onCreateReading],
     ['schedule:Update', onUpdateSchedule],
     ['sensor:Update', onUpdateSensor],

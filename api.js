@@ -9,6 +9,7 @@ const { logger } = require('./utils/logger.util')
 const { mlLettuceModelLoad } = require('./utils/model.util')
 
 const routes = require("./routes/router");
+const { notifInit } = require('./notifications/index.notif')
 const { workerInit } = require('./workers/index.worker');
 
 
@@ -43,6 +44,10 @@ app.use("/", routes);
         await fs.mkdir("./images", { recursive: true });
         await fs.mkdir("./images/uploads", { recursive: true });
         logger.info("Images directory checked/created successfully.");
+
+        // Bind notification service (hooks)
+        await notifInit()
+        logger.info("Notification hooks binded successfully.");
         
         // Wake workers
         await workerInit()
