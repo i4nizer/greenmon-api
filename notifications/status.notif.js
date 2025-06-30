@@ -141,7 +141,7 @@ const onAfterThresholdUpdate = async (threshold, options) => {
 					(act?.delay > 0 ? `After a delay of ${act?.delay}ms, ` : "Immediately, ") +
 					`the input "${act?.Input?.name}" of actuator "${act?.Input?.Actuator?.name}" ` +
 					`will be ${
-						input?.type == "Boolean" ? (act?.value == 0 ? "toggled OFF" : "toggled ON") : `set to ${act?.value}`
+						act?.Input?.type == "Boolean" ? (act?.value == 0 ? "toggled OFF" : "toggled ON") : `set to ${act?.value}`
 					} ` +
 					(act?.duration == -1
 						? "for an indefinite period."
